@@ -1,5 +1,5 @@
 # PLAN.md
-## Stutter Android, Native Reader App, Implementation Plan v1
+## Stutter, Native Reader App, Implementation Plan v1
 
 This plan sequences the work into milestones that produce runnable, testable increments.
 After each milestone:

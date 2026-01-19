@@ -1,20 +1,32 @@
 package org.tomasino.stutter
 
 import android.os.Bundle
+import android.graphics.Color as AndroidColor
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -25,11 +37,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import org.tomasino.stutter.settings.AppearanceOptions
@@ -67,6 +96,7 @@ class MainActivity : ComponentActivity() {
 fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier) {
     val options by repository.options.collectAsState()
     val scope = rememberCoroutineScope()
+    val isDarkTheme = isSystemInDarkTheme()
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -74,8 +104,8 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         val context = LocalContext.current
-        Button(onClick = { context.startActivity(android.content.Intent(context, ReaderActivity::class.java)) }) {
-            Text("Open Reader")
+        Button(onClick = { (context as? android.app.Activity)?.finish() }) {
+            Text("Back to Stutter")
         }
 
         SectionHeader("Playback")
@@ -250,9 +280,65 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 repository.setAppearanceOptions(options.appearance.copy(boldCenter = checked))
             }
         }
+        FontFamilyDropdown(
+            selected = options.appearance.fontFamilyName,
+            onSelected = { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(fontFamilyName = newValue))
+                }
+            },
+        )
+        ColorFieldRow(
+            label = "Background color",
+            colorValue = options.appearance.backgroundColor,
+        ) { newValue ->
+            scope.launch {
+                repository.setAppearanceOptions(options.appearance.copy(backgroundColor = newValue))
+            }
+        }
+        ColorFieldRow(
+            label = "Left text color",
+            colorValue = options.appearance.leftColor,
+        ) { newValue ->
+            scope.launch {
+                repository.setAppearanceOptions(options.appearance.copy(leftColor = newValue))
+            }
+        }
+        ColorFieldRow(
+            label = "Center text color",
+            colorValue = options.appearance.centerColor,
+        ) { newValue ->
+            scope.launch {
+                repository.setAppearanceOptions(options.appearance.copy(centerColor = newValue))
+            }
+        }
+        ColorFieldRow(
+            label = "Remainder text color",
+            colorValue = options.appearance.remainderColor,
+        ) { newValue ->
+            scope.launch {
+                repository.setAppearanceOptions(options.appearance.copy(remainderColor = newValue))
+            }
+        }
+        ColorFieldRow(
+            label = "Flanker text color",
+            colorValue = options.appearance.flankerColor,
+        ) { newValue ->
+            scope.launch {
+                repository.setAppearanceOptions(options.appearance.copy(flankerColor = newValue))
+            }
+        }
 
-        Button(onClick = { scope.launch { resetDefaults(repository) } }) {
-            Text("Reset to defaults")
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Button(onClick = { scope.launch { resetTimings(repository) } }) {
+                Text("Reset Timings")
+            }
+            Button(onClick = { scope.launch { resetColors(repository, options.appearance, isDarkTheme) } }) {
+                Text("Reset Colors")
+            }
+        }
+        Button(onClick = { scope.launch { resetAll(repository, isDarkTheme) } }) {
+            Text("Reset All")
         }
     }
 }
@@ -285,7 +371,11 @@ private fun SettingsScreenPreviewContent() {
 
 @Composable
 private fun SectionHeader(text: String) {
-    Text(text = text)
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleMedium,
+        modifier = Modifier.semantics { heading() },
+    )
 }
 
 @Composable
@@ -308,6 +398,7 @@ private fun IntSliderRow(
             value = value.toFloat(),
             onValueChange = { onChange(it.toInt()) },
             valueRange = min.toFloat()..max.toFloat(),
+            modifier = Modifier.semantics { contentDescription = label },
         )
     }
 }
@@ -332,6 +423,7 @@ private fun FloatSliderRow(
             value = value,
             onValueChange = onChange,
             valueRange = min..max,
+            modifier = Modifier.semantics { contentDescription = label },
         )
     }
 }
@@ -343,7 +435,7 @@ private fun SwitchRow(
     onToggle: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(label)
@@ -352,9 +444,395 @@ private fun SwitchRow(
     }
 }
 
-private suspend fun resetDefaults(repository: SettingsRepository) {
+@Composable
+private fun ColorFieldRow(
+    label: String,
+    colorValue: Int,
+    onColorChange: (Int) -> Unit,
+) {
+    var textValue by remember { mutableStateOf(colorValue.toHexString()) }
+    var isEditing by remember { mutableStateOf(false) }
+    var isPickerOpen by remember { mutableStateOf(false) }
+    var hue by remember { mutableStateOf(0f) }
+    var saturation by remember { mutableStateOf(0f) }
+    var value by remember { mutableStateOf(0f) }
+    var alpha by remember { mutableStateOf(1f) }
+
+    LaunchedEffect(colorValue) {
+        val hsv = FloatArray(3)
+        AndroidColor.colorToHSV(colorValue, hsv)
+        hue = hsv[0]
+        saturation = hsv[1]
+        value = hsv[2]
+        alpha = AndroidColor.alpha(colorValue) / 255f
+        if (!isEditing) {
+            textValue = colorValue.toHexString()
+        }
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(label)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            OutlinedTextField(
+                value = textValue,
+                onValueChange = { newValue ->
+                    textValue = newValue
+                    parseColorHex(newValue)?.let(onColorChange)
+                },
+                label = { Text("Hex color (#RRGGBB or #AARRGGBB)") },
+                modifier = Modifier.weight(1f)
+                    .onFocusChanged { isEditing = it.isFocused }
+                    .semantics { contentDescription = label },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Ascii),
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .semantics { contentDescription = "$label preview" },
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(2.dp)
+                        .background(Color(colorValue)),
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { isPickerOpen = !isPickerOpen }) {
+                Text(if (isPickerOpen) "Hide" else "Pick")
+            }
+        }
+
+        if (isPickerOpen) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SaturationValuePicker(
+                    hue = hue,
+                    saturation = saturation,
+                    value = value,
+                ) { newSaturation, newValue ->
+                    saturation = newSaturation
+                    value = newValue
+                    onColorChange(colorFromHsv(hue, saturation, value, alpha))
+                }
+                HuePicker(hue = hue) { newHue ->
+                    hue = newHue
+                    onColorChange(colorFromHsv(hue, saturation, value, alpha))
+                }
+                AlphaPicker(
+                    hue = hue,
+                    saturation = saturation,
+                    value = value,
+                    alpha = alpha,
+                ) { newAlpha ->
+                    alpha = newAlpha
+                    onColorChange(colorFromHsv(hue, saturation, value, alpha))
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FontFamilyDropdown(
+    selected: String?,
+    onSelected: (String?) -> Unit,
+) {
+    val options = remember {
+        listOf(
+            "System default",
+            "Atkinson Hyperlegible",
+            "Sans Serif",
+            "Serif",
+            "Monospace",
+            "Cursive",
+            "Sans Serif Condensed",
+            "OpenDyslexic",
+        )
+    }
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = when (selected) {
+        null -> "System default"
+        "atkinson-hyperlegible" -> "Atkinson Hyperlegible"
+        "sans-serif" -> "Sans Serif"
+        "serif" -> "Serif"
+        "monospace" -> "Monospace"
+        "cursive" -> "Cursive"
+        "sans-serif-condensed" -> "Sans Serif Condensed"
+        "opendyslexic" -> "OpenDyslexic"
+        else -> selected
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Font family")
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+        ) {
+            OutlinedTextField(
+                value = selectedLabel,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Font family") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .semantics { contentDescription = "Font family" },
+                singleLine = true,
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                options.forEach { label ->
+                    DropdownMenuItem(
+                        text = { Text(label) },
+                        onClick = {
+                            expanded = false
+                            onSelected(
+                                when (label) {
+                                    "System default" -> null
+                                    "Atkinson Hyperlegible" -> "atkinson-hyperlegible"
+                                    "Sans Serif" -> "sans-serif"
+                                    "Serif" -> "serif"
+                                    "Monospace" -> "monospace"
+                                    "Cursive" -> "cursive"
+                                    "Sans Serif Condensed" -> "sans-serif-condensed"
+                                    "OpenDyslexic" -> "opendyslexic"
+                                    else -> null
+                                }
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SaturationValuePicker(
+    hue: Float,
+    saturation: Float,
+    value: Float,
+    onChange: (Float, Float) -> Unit,
+) {
+    val hueColor = Color(colorFromHsv(hue, 1f, 1f, 1f))
+    val indicatorColor = Color.White
+    val indicatorStroke = Color.Black.copy(alpha = 0.4f)
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Tap color")
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .pointerInput(hue) {
+                    detectTapGestures { offset ->
+                        val width = size.width.toFloat()
+                        val height = size.height.toFloat()
+                        if (width == 0f || height == 0f) return@detectTapGestures
+                        val x = offset.x.coerceIn(0f, width)
+                        val y = offset.y.coerceIn(0f, height)
+                        val newSaturation = (x / width).coerceIn(0f, 1f)
+                        val newValue = (1f - (y / height)).coerceIn(0f, 1f)
+                        onChange(newSaturation, newValue)
+                    }
+                }
+                .pointerInput(hue) {
+                    detectDragGestures { change, _ ->
+                        val width = size.width.toFloat()
+                        val height = size.height.toFloat()
+                        if (width == 0f || height == 0f) return@detectDragGestures
+                        val x = change.position.x.coerceIn(0f, width)
+                        val y = change.position.y.coerceIn(0f, height)
+                        val newSaturation = (x / width).coerceIn(0f, 1f)
+                        val newValue = (1f - (y / height)).coerceIn(0f, 1f)
+                        onChange(newSaturation, newValue)
+                        change.consumeAllChanges()
+                    }
+                },
+        ) {
+            drawRect(Brush.horizontalGradient(listOf(Color.White, hueColor)))
+            drawRect(Brush.verticalGradient(listOf(Color.Transparent, Color.Black)))
+            val x = saturation.coerceIn(0f, 1f) * size.width
+            val y = (1f - value.coerceIn(0f, 1f)) * size.height
+            drawCircle(indicatorStroke, radius = 10f, center = Offset(x, y), style = Stroke(width = 3f))
+            drawCircle(indicatorColor, radius = 10f, center = Offset(x, y), style = Stroke(width = 2f))
+        }
+    }
+}
+
+@Composable
+private fun HuePicker(
+    hue: Float,
+    onChange: (Float) -> Unit,
+) {
+    val colors = listOf(
+        Color.Red,
+        Color.Yellow,
+        Color.Green,
+        Color.Cyan,
+        Color.Blue,
+        Color.Magenta,
+        Color.Red,
+    )
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Hue")
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        val width = size.width.toFloat()
+                        if (width == 0f) return@detectTapGestures
+                        val x = offset.x.coerceIn(0f, width)
+                        onChange((x / width * 360f).coerceIn(0f, 360f))
+                    }
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, _ ->
+                        val width = size.width.toFloat()
+                        if (width == 0f) return@detectDragGestures
+                        val x = change.position.x.coerceIn(0f, width)
+                        onChange((x / width * 360f).coerceIn(0f, 360f))
+                        change.consumeAllChanges()
+                    }
+                },
+        ) {
+            drawRect(Brush.horizontalGradient(colors))
+            val x = (hue.coerceIn(0f, 360f) / 360f) * size.width
+            drawCircle(Color.White, radius = 8f, center = Offset(x, size.height / 2f), style = Stroke(width = 2f))
+        }
+    }
+}
+
+@Composable
+private fun AlphaPicker(
+    hue: Float,
+    saturation: Float,
+    value: Float,
+    alpha: Float,
+    onChange: (Float) -> Unit,
+) {
+    val baseColor = Color(colorFromHsv(hue, saturation, value, 1f))
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Alpha")
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(24.dp)
+                .pointerInput(Unit) {
+                    detectTapGestures { offset ->
+                        val width = size.width.toFloat()
+                        if (width == 0f) return@detectTapGestures
+                        val x = offset.x.coerceIn(0f, width)
+                        onChange((x / width).coerceIn(0f, 1f))
+                    }
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, _ ->
+                        val width = size.width.toFloat()
+                        if (width == 0f) return@detectDragGestures
+                        val x = change.position.x.coerceIn(0f, width)
+                        onChange((x / width).coerceIn(0f, 1f))
+                        change.consumeAllChanges()
+                    }
+                },
+        ) {
+            drawRect(Brush.horizontalGradient(listOf(baseColor.copy(alpha = 0f), baseColor)))
+            val x = alpha.coerceIn(0f, 1f) * size.width
+            drawCircle(Color.White, radius = 8f, center = Offset(x, size.height / 2f), style = Stroke(width = 2f))
+        }
+    }
+}
+
+private suspend fun resetTimings(repository: SettingsRepository) {
+    repository.setPlaybackOptions(PlaybackOptions.DEFAULT)
+}
+
+private suspend fun resetColors(
+    repository: SettingsRepository,
+    currentAppearance: AppearanceOptions,
+    isDarkTheme: Boolean,
+) {
+    repository.setAppearanceOptions(
+        solarizedAppearance(currentAppearance, isDarkTheme)
+    )
+}
+
+private suspend fun resetAll(repository: SettingsRepository, isDarkTheme: Boolean) {
     repository.setPlaybackOptions(PlaybackOptions.DEFAULT)
     repository.setTextHandlingOptions(TextHandlingOptions.DEFAULT)
     repository.setLanguageOptions(LanguageOptions.DEFAULT)
-    repository.setAppearanceOptions(AppearanceOptions.DEFAULT)
+    repository.setAppearanceOptions(
+        solarizedAppearance(AppearanceOptions.DEFAULT, isDarkTheme)
+    )
+}
+
+private fun parseColorHex(value: String): Int? {
+    val trimmed = value.trim()
+    if (trimmed.isEmpty()) return null
+    val normalized = if (trimmed.startsWith("#")) trimmed.substring(1) else trimmed
+    if (normalized.length != 6 && normalized.length != 8) return null
+    val hex = normalized.uppercase()
+    val colorLong = hex.toLongOrNull(16) ?: return null
+    return if (hex.length == 6) {
+        (0xFF shl 24) or colorLong.toInt()
+    } else {
+        colorLong.toInt()
+    }
+}
+
+private fun Int.toHexString(): String = String.format("#%08X", this)
+
+private fun colorFromHsv(hue: Float, saturation: Float, value: Float, alpha: Float): Int {
+    val clampedAlpha = (alpha.coerceIn(0f, 1f) * 255).toInt()
+    return AndroidColor.HSVToColor(clampedAlpha, floatArrayOf(hue, saturation, value))
+}
+
+private fun solarizedAppearance(base: AppearanceOptions, isDarkTheme: Boolean): AppearanceOptions {
+    val scheme = if (isDarkTheme) solarizedDark() else solarizedLight()
+    return base.copy(
+        backgroundColor = scheme.background,
+        leftColor = scheme.left,
+        centerColor = scheme.center,
+        remainderColor = scheme.remainder,
+        flankerColor = scheme.flanker,
+    )
+}
+
+private data class SolarizedScheme(
+    val background: Int,
+    val left: Int,
+    val center: Int,
+    val remainder: Int,
+    val flanker: Int,
+)
+
+private fun solarizedLight(): SolarizedScheme {
+    return SolarizedScheme(
+        background = 0xFFFDF6E3.toInt(),
+        left = 0xFF586E75.toInt(),
+        center = 0xFF268BD2.toInt(),
+        remainder = 0xFF657B83.toInt(),
+        flanker = 0xFF93A1A1.toInt(),
+    )
+}
+
+private fun solarizedDark(): SolarizedScheme {
+    return SolarizedScheme(
+        background = 0xFF002B36.toInt(),
+        left = 0xFF839496.toInt(),
+        center = 0xFF2AA198.toInt(),
+        remainder = 0xFF93A1A1.toInt(),
+        flanker = 0xFF586E75.toInt(),
+    )
 }

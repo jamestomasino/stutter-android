@@ -1,4 +1,4 @@
-# Stutter Android, Native Reader App
+# Stutter, Native Reader App
 
 ## Specification, v1
 

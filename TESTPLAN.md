@@ -1,5 +1,5 @@
 # TESTPLAN.md
-## Stutter Android, Native Reader App, Test and Verification Plan v1
+## Stutter, Native Reader App, Test and Verification Plan v1
 
 This document defines the tests and checks required to verify correctness.
 Any behavior not covered here is allowed to change.

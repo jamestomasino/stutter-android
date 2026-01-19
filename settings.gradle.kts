@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Stutter Android"
+rootProject.name = "Stutter"
 include(":app")

@@ -106,8 +106,8 @@ data class AppearanceOptions(
     companion object {
         val DEFAULT = AppearanceOptions(
             baseTextSizeSp = 36f,
-            centerScale = 1.2f,
-            fontFamilyName = null,
+            centerScale = 1.0f,
+            fontFamilyName = "atkinson-hyperlegible",
             backgroundColor = 0xFFFFFFFF.toInt(),
             leftColor = 0xFF6B6B6B.toInt(),
             centerColor = 0xFF111111.toInt(),
@@ -115,7 +115,7 @@ data class AppearanceOptions(
             flankerColor = 0xFF9A9A9A.toInt(),
             letterSpacingEm = 0f,
             paddingDp = 24f,
-            boldCenter = true,
+            boldCenter = false,
         )
     }
 }

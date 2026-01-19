@@ -45,6 +45,27 @@ class SchedulerImpl(
         mutableState.value = SchedulerState.Idle
     }
 
+    override fun updateOptions(options: PlaybackOptions) {
+        this.options = options
+        if (tokens.isEmpty()) return
+        this.offsetsMs = computeOffsets(tokens, options)
+
+        val state = mutableState.value
+        val baseIndex = when (state) {
+            SchedulerState.Playing -> lastEmittedIndex.coerceAtLeast(0).coerceAtMost(tokens.lastIndex)
+            SchedulerState.Paused -> currentIndex.coerceAtMost(tokens.lastIndex)
+            SchedulerState.Finished -> tokens.lastIndex
+            SchedulerState.Idle -> currentIndex.coerceAtMost(tokens.lastIndex)
+        }
+        currentIndex = baseIndex
+        elapsedOffsetMs = offsetsMs.getOrElse(currentIndex) { 0L }
+        lastEmittedIndex = -1
+
+        if (state == SchedulerState.Playing) {
+            startJob()
+        }
+    }
+
     override fun play() {
         if (tokens.isEmpty()) return
         when (mutableState.value) {

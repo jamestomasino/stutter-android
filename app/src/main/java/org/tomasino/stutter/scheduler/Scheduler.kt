@@ -23,6 +23,7 @@ interface Scheduler {
     val events: Flow<ScheduledToken>
 
     fun load(tokens: List<Token>, options: PlaybackOptions)
+    fun updateOptions(options: PlaybackOptions)
     fun play()
     fun pause()
     fun resume()

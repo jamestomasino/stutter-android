@@ -21,6 +21,10 @@ class SettingsRepository(
         .map { prefs -> prefs.toStutterOptions() }
         .stateIn(scope, SharingStarted.WhileSubscribed(5_000), StutterOptions.DEFAULT)
 
+    val isLoaded: StateFlow<Boolean> = dataStore.data
+        .map { true }
+        .stateIn(scope, SharingStarted.WhileSubscribed(5_000), false)
+
     suspend fun setPlaybackOptions(options: PlaybackOptions) {
         val clamped = options.clamped()
         dataStore.edit { prefs ->
