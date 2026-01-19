@@ -1,7 +1,6 @@
 # Makefile, Stutter Android (native)
-# Assumes a standard Gradle Android project with ./gradlew at repo root.
 
-GRADLE ?= ./gradlew
+GRADLEW := ./gradlew
 
 help: ## list targets
 	@echo "targets:"
@@ -11,43 +10,56 @@ help: ## list targets
 
 doctor: ## print toolchain expectations
 	@echo "Requires:"
-	@echo "  - JDK 17 (or whatever your Gradle config specifies)"
-	@echo "  - Android SDK + platform tools (ANDROID_SDK_ROOT or ANDROID_HOME set)"
-	@echo "  - Accept Android SDK licenses (sdkmanager --licenses)"
+	@echo "  - JDK (version per Gradle config)"
+	@echo "  - Android SDK with platform tools"
+	@echo "  - ANDROID_SDK_ROOT or ANDROID_HOME set"
 	@echo ""
-	@echo "Gradle:"
-	@$(GRADLE) -v
+	@if [ ! -x "$(GRADLEW)" ]; then \
+		echo "ERROR: gradlew not found or not executable."; \
+		echo "Run 'make bootstrap' to generate the Gradle wrapper."; \
+		exit 1; \
+	fi
+	@$(GRADLEW) -v
 
-setup: ## download dependencies, prime Gradle caches
-	@$(GRADLE) --no-daemon --refresh-dependencies tasks >/dev/null
+bootstrap: ## generate Gradle wrapper if missing (one time)
+	@if [ -x "$(GRADLEW)" ]; then \
+		echo "gradlew already present."; \
+	else \
+		echo "Generating Gradle wrapper..."; \
+		gradle wrapper; \
+		chmod +x gradlew; \
+	fi
+
+setup: doctor ## download dependencies and prime Gradle caches
+	@$(GRADLEW) --no-daemon --refresh-dependencies tasks >/dev/null
 
 deps: ## refresh dependencies
-	@$(GRADLE) --no-daemon --refresh-dependencies
+	@$(GRADLEW) --no-daemon --refresh-dependencies
 
 build: ## build debug APK
-	@$(GRADLE) --no-daemon assembleDebug
+	@$(GRADLEW) --no-daemon assembleDebug
 
-release: ## build release APK (signing required)
-	@$(GRADLE) --no-daemon assembleRelease
+release: ## build release APK
+	@$(GRADLEW) --no-daemon assembleRelease
 
 test: ## run unit tests
-	@$(GRADLE) --no-daemon test
+	@$(GRADLEW) --no-daemon test
 
-check: ## run all verification tasks (tests, lint, etc)
-	@$(GRADLE) --no-daemon check
+check: ## run all verification tasks
+	@$(GRADLEW) --no-daemon check
 
 lint: ## run Android lint
-	@$(GRADLE) --no-daemon lint
+	@$(GRADLEW) --no-daemon lint
 
-install: ## install debug build on connected device or emulator
-	@$(GRADLE) --no-daemon installDebug
+install: ## install debug build on device
+	@$(GRADLEW) --no-daemon installDebug
 
-connected: ## run instrumentation tests on connected device or emulator
-	@$(GRADLE) --no-daemon connectedAndroidTest
+connected: ## run instrumentation tests
+	@$(GRADLEW) --no-daemon connectedAndroidTest
 
 clean: ## clean build outputs
-	@$(GRADLE) --no-daemon clean
+	@$(GRADLEW) --no-daemon clean
 
-ci: clean setup check ## run a reasonable CI pipeline locally
+ci: clean setup check ## local CI pipeline
 
-.PHONY: help doctor setup deps build release test check lint install connected clean ci
+.PHONY: help doctor bootstrap setup deps build release test check lint install connected clean ci
