@@ -54,6 +54,11 @@ lint: ## run Android lint
 install: ## install debug build on device
 	@$(GRADLEW) --no-daemon installDebug
 
+run: ## install and launch main activity on device/emulator
+	@adb devices | awk 'NR>1 && $$2=="device" {found=1} END {if (!found) {print "ERROR: no connected devices/emulators. Start an AVD or plug in a device."; exit 1}}'
+	@$(GRADLEW) --no-daemon installDebug
+	@adb shell am start -n org.tomasino.stutter/.MainActivity
+
 connected: ## run instrumentation tests
 	@$(GRADLEW) --no-daemon connectedAndroidTest
 
@@ -62,4 +67,4 @@ clean: ## clean build outputs
 
 ci: clean setup check ## local CI pipeline
 
-.PHONY: help doctor bootstrap setup deps build release test check lint install connected clean ci
+.PHONY: help doctor bootstrap setup deps build release test check lint install run connected clean ci
