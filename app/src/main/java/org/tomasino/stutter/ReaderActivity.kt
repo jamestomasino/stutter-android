@@ -28,7 +28,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.tomasino.stutter.hyphenation.FallbackHyphenator
+import org.tomasino.stutter.hyphenation.PatternHyphenator
 import org.tomasino.stutter.language.BasicLanguageResolver
 import org.tomasino.stutter.reader.ReaderView
 import org.tomasino.stutter.fetcher.FetchResult
@@ -80,7 +80,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     val options by repository.options.collectAsState()
     val scope = rememberCoroutineScope()
     val scheduler = remember { org.tomasino.stutter.scheduler.SchedulerImpl(scope) }
-    val hyphenator = remember { FallbackHyphenator() }
+    val hyphenator = remember { PatternHyphenator() }
     val tokenizer = remember { IcuTokenizer() }
     val languageResolver = remember { BasicLanguageResolver() }
     val fetcher = remember { OkHttpFetcher() }
