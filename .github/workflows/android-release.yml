@@ -45,7 +45,8 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Verify signature
-        run: "${ANDROID_SDK_ROOT}/build-tools/34.0.0/apksigner" verify --print-certs app-release-signed.apk
+        run: |
+          "${ANDROID_SDK_ROOT}/build-tools/34.0.0/apksigner" verify --print-certs app-release-signed.apk
 
       - name: Install apksigcopier
         run: python -m pip install --upgrade apksigcopier
