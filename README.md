@@ -134,6 +134,28 @@ This project is intended to be distributed via F-Droid.
 All dependencies must be open source and F-Droid compatible.  
 No proprietary SDKs, analytics, or trackers are permitted.
 
+### F-Droid release flow
+
+This repo contains the app source and build tooling. F-Droid metadata and
+signatures live in the separate `fdroiddata` repo.
+
+Release process (reproducible builds):
+
+1) Update `versionCode`/`versionName` in `app/build.gradle.kts`.
+2) Commit and tag `vX.Y.Z` (annotated). The `Android Release` workflow builds,
+   signs, and attaches `app-release-signed.apk` to the GitHub Release.
+3) Download the `fdroid-signatures` artifact from the workflow run and commit it
+   into `fdroiddata` at:
+   `metadata/org.tomasino.stutter/signatures/<versionCode>/`.
+4) Update `metadata/org.tomasino.stutter.yml` in `fdroiddata` to the new version
+   and push the branch.
+
+Notes:
+- The signing keystore is stored outside the repo and injected via GitHub
+  Secrets for CI signing.
+- Reproducible verification depends on those signature files being present in
+  `fdroiddata`.
+
 ---
 
 ## Status
