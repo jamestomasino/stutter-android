@@ -284,7 +284,12 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             selected = options.appearance.fontFamilyName,
             onSelected = { newValue ->
                 scope.launch {
-                    repository.setAppearanceOptions(options.appearance.copy(fontFamilyName = newValue))
+                    repository.setAppearanceOptions(
+                        options.appearance.copy(
+                            fontFamilyName = newValue,
+                            letterSpacingEm = 0f,
+                        )
+                    )
                 }
             },
         )
@@ -340,6 +345,12 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
         Button(onClick = { scope.launch { resetAll(repository, isDarkTheme) } }) {
             Text("Reset All")
         }
+        Text(
+            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1) " +
+                "and OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1). " +
+                "License text: https://scripts.sil.org/OFL",
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 

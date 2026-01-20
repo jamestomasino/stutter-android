@@ -62,7 +62,7 @@ run: ## install and launch reader activity on device/emulator
 debug: ## install, launch, and stream logcat for the app
 	@adb devices | awk 'NR>1 && $$2=="device" {found=1} END {if (!found) {print "ERROR: no connected devices/emulators. Start an AVD or plug in a device."; exit 1}}'
 	@$(GRADLEW) --no-daemon installDebug
-	@adb shell am start -n org.tomasino.stutter/.MainActivity >/dev/null
+	@adb shell am start -n org.tomasino.stutter/.ReaderActivity >/dev/null
 	@pid=$$(adb shell pidof org.tomasino.stutter | tr -d '\r'); \
 	if [ -z "$$pid" ]; then \
 		for i in 1 2 3 4 5; do \

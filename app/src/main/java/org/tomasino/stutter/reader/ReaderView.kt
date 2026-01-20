@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextUtils
+import android.util.Log
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
@@ -65,11 +66,10 @@ class ReaderView @JvmOverloads constructor(
         if (currentText.isEmpty()) return
 
         val parts = layoutCalculator.split(currentText)
-        val displayParts = if (isRtl) {
-            WordParts(parts.right, parts.center, parts.left)
-        } else {
-            parts
-        }
+        val leftText = if (isRtl) parts.right else parts.left
+        val rightText = if (isRtl) parts.left else parts.right
+        val leftPaintUsed = if (isRtl) rightPaint else leftPaint
+        val rightPaintUsed = if (isRtl) leftPaint else rightPaint
         val contentLeft = paddingLeft.toFloat()
         val contentRight = (width - paddingRight).toFloat()
         val contentWidth = max(0f, contentRight - contentLeft)
@@ -77,25 +77,34 @@ class ReaderView @JvmOverloads constructor(
         val centerX = contentLeft + contentWidth * anchorRatio
         val baselineCenter = paddingTop + (height - paddingTop - paddingBottom) / 2f -
             (centerPaint.ascent() + centerPaint.descent()) / 2f
-        val baselineLeft = baselineCenter + baselineDelta(centerPaint, leftPaint)
-        val baselineRight = baselineCenter + baselineDelta(centerPaint, rightPaint)
+        val baselineLeft = baselineCenter + baselineDelta(centerPaint, leftPaintUsed)
+        val baselineRight = baselineCenter + baselineDelta(centerPaint, rightPaintUsed)
         val baselineFlanker = baselineCenter + baselineDelta(centerPaint, flankerPaint)
 
-        val leftWidth = measureText(leftPaint, displayParts.left)
-        val centerWidth = measureText(centerPaint, displayParts.center)
+        val leftWidth = measureText(leftPaintUsed, leftText)
+        val centerWidth = measureText(centerPaint, parts.center)
+        val rightWidth = measureText(rightPaintUsed, rightText)
 
         val leftStart = centerX - leftWidth - centerWidth / 2f
-        canvas.drawText(displayParts.left, leftStart, baselineLeft, leftPaint)
-        canvas.drawText(displayParts.center, leftStart + leftWidth, baselineCenter, centerPaint)
-        canvas.drawText(displayParts.right, leftStart + leftWidth + centerWidth, baselineRight, rightPaint)
+        canvas.drawText(leftText, leftStart, baselineLeft, leftPaintUsed)
+        canvas.drawText(parts.center, leftStart + leftWidth, baselineCenter, centerPaint)
+        canvas.drawText(rightText, leftStart + leftWidth + centerWidth, baselineRight, rightPaintUsed)
 
         if (showFlankers && !nextText.isNullOrEmpty()) {
             val flankerText = nextText ?: ""
             val flankerWidth = measureText(flankerPaint, flankerText)
+            val gapPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                12f,
+                resources.displayMetrics,
+            )
+            val remainderStart = if (isRtl) leftStart else leftStart + leftWidth + centerWidth
+            val remainderWidth = if (isRtl) leftWidth else rightWidth
+            val remainderEnd = remainderStart + remainderWidth
             val flankerStart = if (isRtl) {
-                min(leftStart - flankerWidth - 24f, centerX - centerWidth / 2f - flankerWidth - 24f)
+                remainderStart - gapPx - flankerWidth
             } else {
-                max(leftStart + leftWidth + centerWidth + 24f, centerX + 24f)
+                remainderEnd + gapPx
             }
             canvas.drawText(flankerText, flankerStart, baselineFlanker, flankerPaint)
         }
@@ -110,7 +119,7 @@ class ReaderView @JvmOverloads constructor(
         leftPaint.textSize = baseSizePx
         centerPaint.textSize = baseSizePx * options.centerScale
         rightPaint.textSize = baseSizePx
-        flankerPaint.textSize = baseSizePx * 0.75f
+        flankerPaint.textSize = baseSizePx
 
         leftPaint.color = options.leftColor
         centerPaint.color = options.centerColor
@@ -118,6 +127,9 @@ class ReaderView @JvmOverloads constructor(
         flankerPaint.color = options.flankerColor
 
         val typeface = resolveTypeface(options.fontFamilyName)
+        if (options.fontFamilyName != null) {
+            Log.d("ReaderView", "Font '${options.fontFamilyName}' resolved=${typeface != null}")
+        }
         leftPaint.typeface = typeface
         rightPaint.typeface = typeface
         flankerPaint.typeface = typeface

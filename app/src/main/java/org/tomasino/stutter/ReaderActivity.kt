@@ -332,15 +332,22 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
 
 private const val SAMPLE_TEXT =
     "Welcome to Stutter. " +
-    "RSVP, or Rapid Serial Visual Presentation, shows one word at a time in the same spot. " +
-    "Stutter is an RSVP reader that lets you tune timing, language, and appearance. " +
+    "RSVP, or Rapid Serial Visual Presentation, is a way to read where words appear one by one in the same place. " +
+    "This can help your eyes move less, because you are not jumping around the page. " +
+    "People use RSVP to read faster or to focus better when long lines are tiring. " +
+    "It can also make reading easier when you want a steady, predictable pace. " +
+    "Stutter is an RSVP reader that lets you tune timing, language, and appearance, " +
+    "including long-word handling across many languages. " +
     "The center button plays and pauses, and a long press on it restarts from the beginning. " +
     "The left button skips back, and the right button skips forward. " +
     "To reach settings, tap the gear next to Load text. " +
-    "In settings, Playback controls timing such as WPM and delays, " +
-    "Text handling controls word splitting and flankers, " +
-    "Language sets detection and defaults, " +
-    "and Appearance controls font, size, spacing, and colors. " +
+    "In settings, Playback controls timing such as WPM and delays, which lets you match the pace to your comfort and attention. " +
+    "Those timing controls exist because different kinds of words and punctuation feel more natural with different pauses. " +
+    "A sentence ending can take a longer breath, while short words or numbers can be slightly faster. " +
+    "Text handling controls word splitting and flankers so long words do not overflow and the next word can be previewed when that helps. " +
+    "Language sets detection and defaults so tokenization, punctuation rules, and hyphenation work correctly for what you are reading. " +
+    "Appearance controls font, size, spacing, and colors so the display is comfortable and readable for your eyes. " +
+    "Stutter stores no reading history and can be used offline. " +
     "Paste text or a URL above, then tap Load text."
 
 private fun isUrl(value: String): Boolean {
