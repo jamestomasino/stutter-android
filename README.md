@@ -144,11 +144,10 @@ Release process (reproducible builds):
 1) Update `versionCode`/`versionName` in `app/build.gradle.kts`.
 2) Commit and tag `vX.Y.Z` (annotated). The `Android Release` workflow builds,
    signs, and attaches `app-release-signed.apk` to the GitHub Release.
-3) Download the `fdroid-signatures` artifact from the workflow run and commit it
-   into `fdroiddata` at:
-   `metadata/org.tomasino.stutter/signatures/<versionCode>/`.
-4) Update `metadata/org.tomasino.stutter.yml` in `fdroiddata` to the new version
-   and push the branch.
+3) Run the helper script to sync `fdroiddata` (requires `gh`):
+   `scripts/fdroid-sync.sh`
+   This will download the `fdroid-signatures` artifact, update
+   `metadata/org.tomasino.stutter.yml`, commit, and push a new branch.
 
 Notes:
 - The signing keystore is stored outside the repo and injected via GitHub

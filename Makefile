@@ -86,4 +86,7 @@ clean: ## clean build outputs
 
 ci: clean setup check ## local CI pipeline
 
-.PHONY: help doctor bootstrap setup deps build release test check lint install run debug connected clean ci
+fdroid-sync: ## sync fdroiddata metadata/signatures from latest release tag
+	@./scripts/fdroid-sync.sh
+
+.PHONY: help doctor bootstrap setup deps build release test check lint install run debug connected clean ci fdroid-sync
