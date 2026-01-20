@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "org.tomasino.stutter"
-    compileSdk = 36
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "org.tomasino.stutter"
         minSdk = 24
-        targetSdk = 36
-        versionCode = 5
-        versionName = "0.1.4"
+        targetSdk = 33
+        versionCode = 6
+        versionName = "0.1.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
