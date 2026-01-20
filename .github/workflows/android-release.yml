@@ -58,8 +58,12 @@ jobs:
           import re
           from pathlib import Path
           text = Path("app/build.gradle.kts").read_text(encoding="utf-8")
-          app_id = re.search(r'applicationId\\s*=\\s*\"([^\"]+)\"', text).group(1)
-          version_code = re.search(r'versionCode\\s*=\\s*(\\d+)', text).group(1)
+          app_id = re.search(r'applicationId\s*=\s*"([^"]+)"', text)
+          version_code = re.search(r'versionCode\s*=\s*(\d+)', text)
+          if not app_id or not version_code:
+              raise SystemExit("Failed to parse applicationId/versionCode from app/build.gradle.kts")
+          app_id = app_id.group(1)
+          version_code = version_code.group(1)
           Path("fdroid-signatures").mkdir(parents=True, exist_ok=True)
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env_file:
               env_file.write(f"APP_ID={app_id}\\nVERSION_CODE={version_code}\\n")
