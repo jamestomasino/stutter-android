@@ -43,6 +43,22 @@ class HyphenationPatternsTest {
     }
 
     @Test
+    fun frenchPatternsSplitAtPlausiblePoints() {
+        val word = "anticonstitutionnellement"
+        val maxLength = 7
+        val segments = hyphenator.split(word, "fr", maxLength)
+        val fallbackSegments = fallback.split(word, "fr", maxLength)
+
+        assertTrue(segments.size > 1)
+        assertEquals(word, segments.joinToString(""))
+        assertTrue(segments != fallbackSegments)
+        segments.forEach { segment ->
+            val length = classifier.wordLength(segment, "fr")
+            assertTrue(length <= maxLength)
+        }
+    }
+
+    @Test
     fun fallbackUsedForUnknownLanguage() {
         val word = "supercalifragilistic"
         val maxLength = 5

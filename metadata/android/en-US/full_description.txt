@@ -1,0 +1,12 @@
+Stutter is an RSVP reader that presents text one word at a time in a fixed spot, so your eyes move less and your pace stays steady.
+
+Paste text, share text from another app, or send a public article URL to extract readable content. Reading speed and timing are deterministic and fully adjustable, including delays for long words, punctuation, numbers, and short words so the rhythm feels natural.
+
+Features:
+- Precise scheduler with drift correction and predictable timing.
+- Language-aware tokenization and hyphenation for long words.
+- Appearance controls for fonts, size, spacing, and colors.
+- Optional flankers to show the next word fragment.
+- No analytics, no tracking, no reading history.
+
+Stutter is fully native Android with no WebView and no embedded browser engine. Settings are stored locally and only affect your current experience.

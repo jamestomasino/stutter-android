@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -35,20 +36,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.FastRewind
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -72,16 +72,22 @@ class ReaderActivity : ComponentActivity() {
     private val settingsRepository by lazy {
         SettingsRepository(applicationContext.settingsDataStore, lifecycleScope)
     }
+    private val sharedTextState = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val initialText = extractText(intent)
+        sharedTextState.value = extractText(intent)
         setContent {
             StutterAndroidTheme {
-                ReaderScreen(settingsRepository, initialText)
+                ReaderScreen(settingsRepository, sharedTextState.value)
             }
         }
+    }
+
+    override fun onNewIntent(intent: android.content.Intent?) {
+        super.onNewIntent(intent)
+        sharedTextState.value = extractText(intent)
     }
 
     companion object {
@@ -177,6 +183,12 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
         if (isSettingsLoaded) {
             scheduler.updateOptions(options.playback)
         }
+    }
+
+    LaunchedEffect(initialText) {
+        val newText = initialText?.takeIf { it.isNotBlank() } ?: return@LaunchedEffect
+        editorText = newText
+        inputText = newText
     }
 
     var currentIndex by remember { mutableStateOf(0) }
@@ -289,15 +301,9 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     )
                 }
                 FloatingActionButton(
-                    modifier = Modifier
-                        .size(72.dp)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onLongPress = { scheduler.restart() },
-                            )
-                        },
+                    modifier = Modifier.size(72.dp),
                     onClick = {
-                        when (schedulerState) {
+                        when (scheduler.state.value) {
                             org.tomasino.stutter.scheduler.SchedulerState.Playing -> scheduler.pause()
                             org.tomasino.stutter.scheduler.SchedulerState.Paused -> scheduler.resume()
                             else -> scheduler.play()
@@ -307,13 +313,13 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     if (schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing) {
                         Icon(
                             imageVector = Icons.Filled.Pause,
-                            contentDescription = "Pause (long-press to restart)",
+                            contentDescription = "Pause",
                             modifier = Modifier.size(48.dp),
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play (long-press to restart)",
+                            contentDescription = "Play",
                             modifier = Modifier.size(48.dp),
                         )
                     }
@@ -322,6 +328,25 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     Icon(
                         imageVector = Icons.Filled.FastForward,
                         contentDescription = "Skip forward",
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                FilledIconButton(
+                    onClick = { scheduler.restart() },
+                    modifier = Modifier.size(40.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Replay,
+                        contentDescription = "Restart",
                     )
                 }
             }
@@ -338,7 +363,7 @@ private const val SAMPLE_TEXT =
     "It can also make reading easier when you want a steady, predictable pace. " +
     "Stutter is an RSVP reader that lets you tune timing, language, and appearance, " +
     "including long-word handling across many languages. " +
-    "The center button plays and pauses, and a long press on it restarts from the beginning. " +
+    "The center button plays and pauses, and the restart button returns to the beginning. " +
     "The left button skips back, and the right button skips forward. " +
     "To reach settings, tap the gear next to Load text. " +
     "In settings, Playback controls timing such as WPM and delays, which lets you match the pace to your comfort and attention. " +

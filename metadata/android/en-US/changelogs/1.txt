@@ -1,0 +1,4 @@
+- Initial public release.
+- RSVP reader with precise timing controls.
+- Language-aware tokenization and hyphenation.
+- Appearance customization and privacy-first defaults.

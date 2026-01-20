@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,7 +49,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
@@ -346,8 +346,10 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             Text("Reset All")
         }
         Text(
-            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1) " +
-                "and OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1). " +
+            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1) and " +
+                "OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1). " +
+                "Copyright (c) Braille Institute and " +
+                "Copyright (c) Abelardo Gonzalez. " +
                 "License text: https://scripts.sil.org/OFL",
             style = MaterialTheme.typography.bodySmall,
         )
@@ -593,7 +595,7 @@ private fun FontFamilyDropdown(
                 label = { Text("Font family") },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
-                    .menuAnchor()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
                     .fillMaxWidth()
                     .semantics { contentDescription = "Font family" },
                 singleLine = true,
@@ -666,7 +668,7 @@ private fun SaturationValuePicker(
                         val newSaturation = (x / width).coerceIn(0f, 1f)
                         val newValue = (1f - (y / height)).coerceIn(0f, 1f)
                         onChange(newSaturation, newValue)
-                        change.consumeAllChanges()
+                        change.consume()
                     }
                 },
         ) {
@@ -714,7 +716,7 @@ private fun HuePicker(
                         if (width == 0f) return@detectDragGestures
                         val x = change.position.x.coerceIn(0f, width)
                         onChange((x / width * 360f).coerceIn(0f, 360f))
-                        change.consumeAllChanges()
+                        change.consume()
                     }
                 },
         ) {
@@ -754,7 +756,7 @@ private fun AlphaPicker(
                         if (width == 0f) return@detectDragGestures
                         val x = change.position.x.coerceIn(0f, width)
                         onChange((x / width).coerceIn(0f, 1f))
-                        change.consumeAllChanges()
+                        change.consume()
                     }
                 },
         ) {

@@ -22,6 +22,7 @@ class HyphenationPatternRepository(
         val resourcePath = when (normalizedTag) {
             "en", "en-us", "en_us" -> "hyphenation/hyph-en-us.tex"
             "de", "de-de", "de_1996", "de-1996" -> "hyphenation/hyph-de-1996.tex"
+            "fr", "fr-fr", "fr_fr" -> "hyphenation/hyph-fr.tex"
             else -> return null
         }
         val stream = loader(resourcePath) ?: return null
