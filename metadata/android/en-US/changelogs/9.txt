@@ -1,0 +1,2 @@
+- Full F-Droid pipeline working.
+- Dark/Light Mode colorscheme configures on first run.

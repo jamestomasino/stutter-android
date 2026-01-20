@@ -1,0 +1,1 @@
+- Adjust build tooling versions to support F-Droid builds.

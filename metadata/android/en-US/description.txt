@@ -1,0 +1,1 @@
+RSVP reader that shows one word at a time with precise timing controls.

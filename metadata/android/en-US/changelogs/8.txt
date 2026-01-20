@@ -1,0 +1,1 @@
+- Align Material3 menu anchoring with older Compose tooling.

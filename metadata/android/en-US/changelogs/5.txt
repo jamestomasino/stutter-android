@@ -1,0 +1,1 @@
+- Adjust Compose build tooling for F-Droid compatibility.

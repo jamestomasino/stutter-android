@@ -1,0 +1,1 @@
+- Align target SDK with tooling used for F-Droid builds.
