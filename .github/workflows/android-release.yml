@@ -21,6 +21,12 @@ jobs:
           java-version: "17"
           cache: gradle
 
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build-tools
+        run: sdkmanager "build-tools;34.0.0" "platform-tools"
+
       - name: Restore keystore
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_B64 }}" | base64 -d > release.jks
@@ -30,7 +36,7 @@ jobs:
 
       - name: Sign APK
         run: |
-          apksigner sign \
+          "${ANDROID_SDK_ROOT}/build-tools/34.0.0/apksigner" sign \
             --ks release.jks \
             --ks-key-alias "${{ secrets.RELEASE_KEY_ALIAS }}" \
             --ks-pass pass:"${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" \
@@ -39,7 +45,7 @@ jobs:
             app/build/outputs/apk/release/app-release-unsigned.apk
 
       - name: Verify signature
-        run: apksigner verify --print-certs app-release-signed.apk
+        run: "${ANDROID_SDK_ROOT}/build-tools/34.0.0/apksigner" verify --print-certs app-release-signed.apk
 
       - name: Install apksigcopier
         run: python -m pip install --upgrade apksigcopier
