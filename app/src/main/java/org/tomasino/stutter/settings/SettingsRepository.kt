@@ -79,6 +79,34 @@ class SettingsRepository(
         }
     }
 
+    suspend fun ensureInitialColorReset(
+        currentAppearance: AppearanceOptions,
+        isDarkTheme: Boolean,
+    ) {
+        dataStore.edit { prefs ->
+            if (prefs[Keys.COLOR_RESET_DONE] == true) return@edit
+
+            val hasCustomColors = prefs[Keys.BACKGROUND_COLOR] != null ||
+                prefs[Keys.LEFT_COLOR] != null ||
+                prefs[Keys.CENTER_COLOR] != null ||
+                prefs[Keys.REMAINDER_COLOR] != null ||
+                prefs[Keys.FLANKER_COLOR] != null
+
+            if (hasCustomColors) {
+                prefs[Keys.COLOR_RESET_DONE] = true
+                return@edit
+            }
+
+            val updated = solarizedAppearance(currentAppearance, isDarkTheme)
+            prefs[Keys.BACKGROUND_COLOR] = updated.backgroundColor
+            prefs[Keys.LEFT_COLOR] = updated.leftColor
+            prefs[Keys.CENTER_COLOR] = updated.centerColor
+            prefs[Keys.REMAINDER_COLOR] = updated.remainderColor
+            prefs[Keys.FLANKER_COLOR] = updated.flankerColor
+            prefs[Keys.COLOR_RESET_DONE] = true
+        }
+    }
+
     private fun Preferences.toStutterOptions(): StutterOptions {
         val playback = PlaybackOptions(
             wpm = this[Keys.WPM] ?: PlaybackOptions.DEFAULT.wpm,
@@ -147,5 +175,6 @@ class SettingsRepository(
         val LETTER_SPACING = floatPreferencesKey("letter_spacing")
         val PADDING_DP = floatPreferencesKey("padding_dp")
         val BOLD_CENTER = booleanPreferencesKey("bold_center")
+        val COLOR_RESET_DONE = booleanPreferencesKey("color_reset_done")
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FloatingActionButton
@@ -112,6 +113,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     val options by repository.options.collectAsState()
     val isSettingsLoaded by repository.isLoaded.collectAsState()
     val scope = rememberCoroutineScope()
+    val isDarkTheme = isSystemInDarkTheme()
     val scheduler = remember { org.tomasino.stutter.scheduler.SchedulerImpl(scope) }
     val hyphenator = remember { PatternHyphenator() }
     val tokenizer = remember { IcuTokenizer() }
@@ -132,6 +134,12 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
 
     var tokens by remember { mutableStateOf<List<Token>>(emptyList()) }
     val context = LocalContext.current
+
+    LaunchedEffect(isSettingsLoaded, isDarkTheme) {
+        if (isSettingsLoaded) {
+            repository.ensureInitialColorReset(options.appearance, isDarkTheme)
+        }
+    }
 
     LaunchedEffect(
         inputText,
