@@ -1,0 +1,3 @@
+- Adds hyphenation patterns for more common languages (English, Spanish, French, German, Portuguese, Russian, Arabic, Hindi, Bengali, Indonesian, Marathi, Telugu, Turkish, Tamil, Vietnamese, Italian, Thai, Persian).
+- Adds visible hyphen markers when long words are split during playback.
+- Improves hyphenation language matching so locale variants map to the base language.
