@@ -1,0 +1,5 @@
+- Adds new color schemes (Solarized, Monokai, Gruvbox, Dracula, Nord, Papercolor) plus button color controls.
+- Adds a live WPM slider on the reader and improved restart/skip behavior.
+- Adds a reactive paste button and input text contrast derived from the chosen background.
+- Adds new font options (IBM Plex Sans, Source Sans 3, Source Serif 4, Noto Sans/Serif, Literata, Merriweather Sans, Fira Sans, Iosevka, Lexend).
+- Reworks settings into Visual Settings and Timing & Features with confirmation prompts and a language dropdown.
