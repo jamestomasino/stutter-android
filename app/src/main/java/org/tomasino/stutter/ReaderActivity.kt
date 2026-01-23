@@ -77,7 +77,7 @@ import org.tomasino.stutter.settings.SettingsRepository
 import org.tomasino.stutter.settings.settingsDataStore
 import org.tomasino.stutter.tokenizer.IcuTokenizer
 import org.tomasino.stutter.tokenizer.Token
-import org.tomasino.stutter.tokenizer.splitLongTokens
+import org.tomasino.stutter.tokenizer.buildTokensForText
 import org.tomasino.stutter.ui.theme.StutterAndroidTheme
 import java.util.Locale
 
@@ -138,7 +138,6 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     var inputText by remember { mutableStateOf(startingText) }
     var editorText by remember { mutableStateOf(startingText) }
     var statusMessage by remember { mutableStateOf<String?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
     val languageTag = languageResolver.resolve(
         htmlLanguageTag = null,
         userDefault = options.language.defaultLanguageTag,
@@ -154,6 +153,18 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
         }
     }
 
+    fun updateTokensForText(text: String) {
+        tokens = buildTokensForText(
+            text = text,
+            languageTag = languageTag,
+            maxWordLength = options.textHandling.maxWordLength,
+            tokenizer = tokenizer,
+            hyphenator = hyphenator,
+        )
+        scheduler.load(tokens, options.playback)
+        scheduler.restart()
+    }
+
     LaunchedEffect(
         inputText,
         options.textHandling.maxWordLength,
@@ -161,44 +172,32 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
         isSettingsLoaded,
     ) {
         if (!isSettingsLoaded) return@LaunchedEffect
-        isLoading = true
-        statusMessage = null
-
-        val resolvedText = if (isUrl(inputText)) {
+        if (isUrl(inputText)) {
+            statusMessage = "Loading..."
+            updateTokensForText(statusMessage ?: "")
             val fetchResult = withContext(Dispatchers.IO) { fetcher.fetch(inputText) }
             when (fetchResult) {
                 is FetchResult.Error -> {
                     statusMessage = fetchResult.message
-                    ""
+                    updateTokensForText(statusMessage ?: "")
                 }
                 is FetchResult.Success -> {
                     when (val extractResult = extractor.extract(fetchResult.html)) {
                         is ExtractResult.Error -> {
                             statusMessage = extractResult.message
-                            ""
+                            updateTokensForText(statusMessage ?: "")
                         }
-                        is ExtractResult.Success -> extractResult.content.text
+                        is ExtractResult.Success -> {
+                            statusMessage = null
+                            updateTokensForText(extractResult.content.text)
+                        }
                     }
                 }
             }
         } else {
-            inputText
+            statusMessage = null
+            updateTokensForText(inputText)
         }
-
-        if (resolvedText.isNotBlank()) {
-            val rawTokens = tokenizer.tokenize(resolvedText, languageTag)
-            tokens = splitLongTokens(
-                tokens = rawTokens,
-                languageTag = languageTag,
-                maxWordLength = options.textHandling.maxWordLength,
-                hyphenator = hyphenator,
-            )
-            scheduler.load(tokens, options.playback)
-            scheduler.restart()
-        } else {
-            tokens = emptyList()
-        }
-        isLoading = false
     }
 
     LaunchedEffect(options.playback, isSettingsLoaded) {
@@ -236,11 +235,6 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     val current = tokens.getOrNull(currentIndex)
     val next = tokens.getOrNull(currentIndex + 1)
     val canPaste = clipboardText.isNotBlank()
-    val statusDisplayText = when {
-        isLoading -> "Loading..."
-        !statusMessage.isNullOrBlank() -> statusMessage
-        else -> null
-    }
     val buttonContainerColor = Color(options.appearance.buttonBackgroundColor)
     val buttonContentColor = Color(options.appearance.buttonTextColor)
     val buttonColors = ButtonDefaults.buttonColors(
@@ -335,9 +329,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     view.setAppearance(options.appearance)
                     view.setShowFlankers(options.textHandling.showFlankers)
                     view.setLanguageTag(languageTag)
-                    if (statusDisplayText != null) {
-                        view.setWord(statusDisplayText, null)
-                    } else if (current != null) {
+                    if (current != null) {
                         view.setWord(current.text, next?.text)
                     } else {
                         view.setWord("", null)

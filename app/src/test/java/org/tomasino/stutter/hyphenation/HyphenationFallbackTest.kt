@@ -66,4 +66,31 @@ class HyphenationFallbackTest {
         }
         assertTrue(splitTokens.last().text.last().isLetter())
     }
+
+    @Test
+    fun splitLongTokensUsesHyphenBoundariesWhenTooLong() {
+        val tokenizer = IcuTokenizer()
+        val tokens = tokenizer.tokenize("alpha-beta-gamma", "en")
+        val splitTokens = splitLongTokens(tokens, "en", 7, hyphenator)
+
+        assertEquals(listOf("alpha-", "beta-", "gamma"), splitTokens.map { it.text })
+    }
+
+    @Test
+    fun splitLongTokensKeepsHyphenatedTokenWhenWithinLimit() {
+        val tokenizer = IcuTokenizer()
+        val tokens = tokenizer.tokenize("alpha-beta", "en")
+        val splitTokens = splitLongTokens(tokens, "en", 10, hyphenator)
+
+        assertEquals(listOf("alpha-beta"), splitTokens.map { it.text })
+    }
+
+    @Test
+    fun splitLongTokensSupportsUnicodeHyphens() {
+        val tokenizer = IcuTokenizer()
+        val tokens = tokenizer.tokenize("alpha–beta–gamma", "en")
+        val splitTokens = splitLongTokens(tokens, "en", 7, hyphenator)
+
+        assertEquals(listOf("alpha–", "beta–", "gamma"), splitTokens.map { it.text })
+    }
 }

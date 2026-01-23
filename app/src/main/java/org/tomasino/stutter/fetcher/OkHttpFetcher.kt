@@ -81,7 +81,7 @@ class OkHttpFetcher(
 
     companion object {
         const val DEFAULT_TIMEOUT_MS = 10_000L
-        const val DEFAULT_MAX_BYTES = 1_000_000L
+        const val DEFAULT_MAX_BYTES = 5_000_000L
         const val DEFAULT_REDIRECT_CAP = 5
         private const val READ_CHUNK_SIZE = 8_192L
     }
