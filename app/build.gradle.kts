@@ -41,8 +41,7 @@ android {
     }
     packaging {
         resources {
-            excludes += "assets/dexopt/baseline.prof"
-            excludes += "assets/dexopt/baseline.profm"
+            excludes += "/assets/dexopt/*"
         }
     }
 }
