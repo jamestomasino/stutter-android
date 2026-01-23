@@ -39,11 +39,6 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
-    packaging {
-        resources {
-            excludes += "/assets/dexopt/*"
-        }
-    }
 }
 
 dependencies {
