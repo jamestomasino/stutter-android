@@ -78,23 +78,72 @@ class SchedulerTest {
     }
 
     @Test
-    fun skipForwardBackwardRespectsSkipCount() = runTest {
+    fun restartWhilePausedEmitsFirstAndStaysPaused() = runTest {
         val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
-        val tokens = listOf(token("one"), token("two"), token("three"), token("four"))
-        scheduler.load(tokens, baseOptions().copy(skipCount = 2))
+        val tokens = listOf(token("one"), token("two"), token("three"))
+        scheduler.load(tokens, baseOptions())
 
         val events = mutableListOf<ScheduledToken>()
         val job = launch { scheduler.events.take(2).toList(events) }
 
-        scheduler.skipForward()
         scheduler.play()
         runCurrent()
-
-        scheduler.skipBack()
+        scheduler.pause()
+        scheduler.restart()
         runCurrent()
         job.join()
 
-        assertEquals(listOf(2, 0), events.map { it.index })
+        assertEquals(listOf(0, 0), events.map { it.index })
+        assertEquals(SchedulerState.Paused, scheduler.state.value)
+
+        advanceTimeBy(2000)
+        runCurrent()
+        assertEquals(2, events.size)
+    }
+
+    @Test
+    fun skipWhilePausedEmitsAndStaysPaused() = runTest {
+        val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
+        val tokens = listOf(token("one"), token("two"), token("three"))
+        scheduler.load(tokens, baseOptions().copy(skipCount = 1))
+
+        val events = mutableListOf<ScheduledToken>()
+        val job = launch { scheduler.events.take(1).toList(events) }
+        runCurrent()
+
+        scheduler.skipForward()
+        runCurrent()
+        job.join()
+
+        assertEquals(listOf(1), events.map { it.index })
+        assertEquals(SchedulerState.Paused, scheduler.state.value)
+
+        advanceTimeBy(2000)
+        runCurrent()
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun skipWhilePlayingContinuesPlayback() = runTest {
+        val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
+        val tokens = listOf(token("one"), token("two"), token("three"))
+        scheduler.load(tokens, baseOptions().copy(skipCount = 1))
+
+        val events = mutableListOf<ScheduledToken>()
+        val job = launch { scheduler.events.take(3).toList(events) }
+
+        scheduler.play()
+        runCurrent()
+
+        scheduler.skipForward()
+        runCurrent()
+        assertEquals(SchedulerState.Playing, scheduler.state.value)
+
+        advanceTimeBy(2000)
+        runCurrent()
+        job.join()
+
+        assertEquals(listOf(0, 1, 2), events.map { it.index })
     }
 
     @Test

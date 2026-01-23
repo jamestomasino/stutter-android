@@ -33,12 +33,11 @@ class ExtractorTest {
     }
 
     @Test
-    fun detectsLoginPages() {
+    fun extractsLoginLikePagesAsContent() {
         val html = readFixture("login.html")
-        val result = extractor.extract(html)
+        val result = extractor.extract(html) as ExtractResult.Success
 
-        assertTrue(result is ExtractResult.Error)
-        assertTrue((result as ExtractResult.Error).message.contains("Login"))
+        assertTrue(result.content.text.isNotBlank())
     }
 
     private fun readFixture(name: String): String {

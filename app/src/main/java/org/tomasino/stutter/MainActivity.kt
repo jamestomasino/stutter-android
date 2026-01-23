@@ -10,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,16 +24,21 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,8 +73,11 @@ import org.tomasino.stutter.settings.SettingsRepository
 import org.tomasino.stutter.settings.StutterOptions
 import org.tomasino.stutter.settings.TextHandlingOptions
 import org.tomasino.stutter.settings.settingsDataStore
-import org.tomasino.stutter.settings.solarizedAppearance
+import org.tomasino.stutter.settings.COLOR_SCHEME_OPTIONS
+import org.tomasino.stutter.settings.applyColorScheme
+import org.tomasino.stutter.settings.colorSchemeLabel
 import org.tomasino.stutter.ui.theme.StutterAndroidTheme
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val settingsRepository by lazy {
@@ -97,6 +106,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
     val options by repository.options.collectAsState()
     val scope = rememberCoroutineScope()
     val isDarkTheme = isSystemInDarkTheme()
+    var resetTarget by remember { mutableStateOf<ResetTarget?>(null) }
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -108,250 +118,309 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             Text("Back to Stutter")
         }
 
-        SectionHeader("Playback")
-        IntSliderRow(
-            label = "WPM",
-            value = options.playback.wpm,
-            min = PlaybackOptions.MIN_WPM,
-            max = PlaybackOptions.MAX_WPM,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(wpm = newValue))
-            }
-        }
-        IntSliderRow(
-            label = "Slow start count",
-            value = options.playback.slowStartCount,
-            min = PlaybackOptions.MIN_SLOW_START,
-            max = PlaybackOptions.MAX_SLOW_START,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(slowStartCount = newValue))
-            }
-        }
-        FloatSliderRow(
-            label = "Sentence delay",
-            value = options.playback.sentenceDelay,
-            min = PlaybackOptions.MIN_SENTENCE_DELAY,
-            max = PlaybackOptions.MAX_SENTENCE_DELAY,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(sentenceDelay = newValue))
-            }
-        }
-        FloatSliderRow(
-            label = "Other punctuation delay",
-            value = options.playback.otherPuncDelay,
-            min = PlaybackOptions.MIN_OTHER_PUNC_DELAY,
-            max = PlaybackOptions.MAX_OTHER_PUNC_DELAY,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(otherPuncDelay = newValue))
-            }
-        }
-        FloatSliderRow(
-            label = "Short word delay",
-            value = options.playback.shortWordDelay,
-            min = PlaybackOptions.MIN_SHORT_WORD_DELAY,
-            max = PlaybackOptions.MAX_SHORT_WORD_DELAY,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(shortWordDelay = newValue))
-            }
-        }
-        FloatSliderRow(
-            label = "Long word delay",
-            value = options.playback.longWordDelay,
-            min = PlaybackOptions.MIN_LONG_WORD_DELAY,
-            max = PlaybackOptions.MAX_LONG_WORD_DELAY,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(longWordDelay = newValue))
-            }
-        }
-        FloatSliderRow(
-            label = "Numeric delay",
-            value = options.playback.numericDelay,
-            min = PlaybackOptions.MIN_NUMERIC_DELAY,
-            max = PlaybackOptions.MAX_NUMERIC_DELAY,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(numericDelay = newValue))
-            }
-        }
-        IntSliderRow(
-            label = "Skip count",
-            value = options.playback.skipCount,
-            min = PlaybackOptions.MIN_SKIP_COUNT,
-            max = PlaybackOptions.MAX_SKIP_COUNT,
-        ) { newValue ->
-            scope.launch {
-                repository.setPlaybackOptions(options.playback.copy(skipCount = newValue))
-            }
-        }
-
-        SectionHeader("Text handling")
-        IntSliderRow(
-            label = "Max word length",
-            value = options.textHandling.maxWordLength,
-            min = TextHandlingOptions.MIN_MAX_WORD_LENGTH,
-            max = TextHandlingOptions.MAX_MAX_WORD_LENGTH,
-        ) { newValue ->
-            scope.launch {
-                repository.setTextHandlingOptions(options.textHandling.copy(maxWordLength = newValue))
-            }
-        }
-        SwitchRow(
-            label = "Show flankers",
-            checked = options.textHandling.showFlankers,
-        ) { checked ->
-            scope.launch {
-                repository.setTextHandlingOptions(options.textHandling.copy(showFlankers = checked))
-            }
-        }
-
-        SectionHeader("Language")
-        SwitchRow(
-            label = "Auto-detect from HTML",
-            checked = options.language.autoDetectFromHtml,
-        ) { checked ->
-            scope.launch {
-                repository.setLanguageOptions(options.language.copy(autoDetectFromHtml = checked))
-            }
-        }
-        OutlinedTextField(
-            value = options.language.defaultLanguageTag.orEmpty(),
-            onValueChange = { newValue ->
+        SectionFrame(title = "Visual settings") {
+            FloatSliderRow(
+                label = "Base text size (sp)",
+                value = options.appearance.baseTextSizeSp,
+                min = 16f,
+                max = 72f,
+            ) { newValue ->
                 scope.launch {
-                    repository.setLanguageOptions(options.language.copy(defaultLanguageTag = newValue))
+                    repository.setAppearanceOptions(options.appearance.copy(baseTextSizeSp = newValue))
                 }
-            },
-            label = { Text("Default language tag (BCP-47)") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-        )
-
-        SectionHeader("Appearance")
-        FloatSliderRow(
-            label = "Base text size (sp)",
-            value = options.appearance.baseTextSizeSp,
-            min = 16f,
-            max = 72f,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(baseTextSizeSp = newValue))
             }
-        }
-        FloatSliderRow(
-            label = "Center scale",
-            value = options.appearance.centerScale,
-            min = 1.0f,
-            max = 2.0f,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(centerScale = newValue))
+            FloatSliderRow(
+                label = "Center scale",
+                value = options.appearance.centerScale,
+                min = 1.0f,
+                max = 2.0f,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(centerScale = newValue))
+                }
             }
-        }
         FloatSliderRow(
             label = "Letter spacing (em)",
             value = options.appearance.letterSpacingEm,
-            min = 0f,
+            min = -0.3f,
             max = 0.3f,
         ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(letterSpacingEm = newValue))
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(letterSpacingEm = newValue))
+                }
             }
-        }
-        FloatSliderRow(
-            label = "Padding (dp)",
-            value = options.appearance.paddingDp,
-            min = 8f,
-            max = 64f,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(paddingDp = newValue))
+            FloatSliderRow(
+                label = "Padding (dp)",
+                value = options.appearance.paddingDp,
+                min = 8f,
+                max = 64f,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(paddingDp = newValue))
+                }
             }
-        }
-        SwitchRow(
-            label = "Bold center letter",
-            checked = options.appearance.boldCenter,
-        ) { checked ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(boldCenter = checked))
+            SwitchRow(
+                label = "Bold center letter",
+                checked = options.appearance.boldCenter,
+            ) { checked ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(boldCenter = checked))
+                }
             }
-        }
-        FontFamilyDropdown(
-            selected = options.appearance.fontFamilyName,
-            onSelected = { newValue ->
+            FontFamilyDropdown(
+                selected = options.appearance.fontFamilyName,
+                onSelected = { newValue ->
+                    scope.launch {
+                        repository.setAppearanceOptions(
+                            options.appearance.copy(
+                                fontFamilyName = newValue,
+                                letterSpacingEm = 0f,
+                            )
+                        )
+                    }
+                },
+            )
+            ColorSchemeDropdown(
+                selected = options.appearance.colorSchemeName,
+            ) { schemeId ->
                 scope.launch {
                     repository.setAppearanceOptions(
-                        options.appearance.copy(
-                            fontFamilyName = newValue,
-                            letterSpacingEm = 0f,
-                        )
+                        applyColorScheme(options.appearance, schemeId, isDarkTheme)
                     )
                 }
-            },
-        )
-        ColorFieldRow(
-            label = "Background color",
-            colorValue = options.appearance.backgroundColor,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(backgroundColor = newValue))
             }
-        }
-        ColorFieldRow(
-            label = "Left text color",
-            colorValue = options.appearance.leftColor,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(leftColor = newValue))
+            ColorFieldRow(
+                label = "Background color",
+                colorValue = options.appearance.backgroundColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(backgroundColor = newValue))
+                }
             }
-        }
-        ColorFieldRow(
-            label = "Center text color",
-            colorValue = options.appearance.centerColor,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(centerColor = newValue))
+            ColorFieldRow(
+                label = "Left text color",
+                colorValue = options.appearance.leftColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(leftColor = newValue))
+                }
             }
-        }
-        ColorFieldRow(
-            label = "Remainder text color",
-            colorValue = options.appearance.remainderColor,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(remainderColor = newValue))
+            ColorFieldRow(
+                label = "Center text color",
+                colorValue = options.appearance.centerColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(centerColor = newValue))
+                }
             }
-        }
-        ColorFieldRow(
-            label = "Flanker text color",
-            colorValue = options.appearance.flankerColor,
-        ) { newValue ->
-            scope.launch {
-                repository.setAppearanceOptions(options.appearance.copy(flankerColor = newValue))
+            ColorFieldRow(
+                label = "Remainder text color",
+                colorValue = options.appearance.remainderColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(remainderColor = newValue))
+                }
+            }
+            ColorFieldRow(
+                label = "Flanker text color",
+                colorValue = options.appearance.flankerColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(flankerColor = newValue))
+                }
+            }
+            ColorFieldRow(
+                label = "Button background color",
+                colorValue = options.appearance.buttonBackgroundColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(buttonBackgroundColor = newValue))
+                }
+            }
+            ColorFieldRow(
+                label = "Button text color",
+                colorValue = options.appearance.buttonTextColor,
+            ) { newValue ->
+                scope.launch {
+                    repository.setAppearanceOptions(options.appearance.copy(buttonTextColor = newValue))
+                }
+            }
+
+            Button(onClick = { resetTarget = ResetTarget.Visual }) {
+                Text("Reset Visual Settings")
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Button(onClick = { scope.launch { resetTimings(repository) } }) {
-                Text("Reset Timings")
+        Spacer(modifier = Modifier.height(8.dp))
+
+        SectionFrame(title = "Timing & Features") {
+            IntSliderRow(
+                label = "WPM",
+                value = options.playback.wpm,
+                min = PlaybackOptions.MIN_WPM,
+                max = PlaybackOptions.MAX_WPM,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(wpm = newValue))
+                }
             }
-            Button(onClick = { scope.launch { resetColors(repository, options.appearance, isDarkTheme) } }) {
-                Text("Reset Colors")
+            IntSliderRow(
+                label = "Slow start count",
+                value = options.playback.slowStartCount,
+                min = PlaybackOptions.MIN_SLOW_START,
+                max = PlaybackOptions.MAX_SLOW_START,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(slowStartCount = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = "Sentence delay",
+                value = options.playback.sentenceDelay,
+                min = PlaybackOptions.MIN_SENTENCE_DELAY,
+                max = PlaybackOptions.MAX_SENTENCE_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(sentenceDelay = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = "Other punctuation delay",
+                value = options.playback.otherPuncDelay,
+                min = PlaybackOptions.MIN_OTHER_PUNC_DELAY,
+                max = PlaybackOptions.MAX_OTHER_PUNC_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(otherPuncDelay = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = "Short word delay",
+                value = options.playback.shortWordDelay,
+                min = PlaybackOptions.MIN_SHORT_WORD_DELAY,
+                max = PlaybackOptions.MAX_SHORT_WORD_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(shortWordDelay = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = "Long word delay",
+                value = options.playback.longWordDelay,
+                min = PlaybackOptions.MIN_LONG_WORD_DELAY,
+                max = PlaybackOptions.MAX_LONG_WORD_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(longWordDelay = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = "Numeric delay",
+                value = options.playback.numericDelay,
+                min = PlaybackOptions.MIN_NUMERIC_DELAY,
+                max = PlaybackOptions.MAX_NUMERIC_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(numericDelay = newValue))
+                }
+            }
+            IntSliderRow(
+                label = "Skip count",
+                value = options.playback.skipCount,
+                min = PlaybackOptions.MIN_SKIP_COUNT,
+                max = PlaybackOptions.MAX_SKIP_COUNT,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(skipCount = newValue))
+                }
+            }
+
+            IntSliderRow(
+                label = "Max word length",
+                value = options.textHandling.maxWordLength,
+                min = TextHandlingOptions.MIN_MAX_WORD_LENGTH,
+                max = TextHandlingOptions.MAX_MAX_WORD_LENGTH,
+            ) { newValue ->
+                scope.launch {
+                    repository.setTextHandlingOptions(options.textHandling.copy(maxWordLength = newValue))
+                }
+            }
+            SwitchRow(
+                label = "Show flankers",
+                checked = options.textHandling.showFlankers,
+            ) { checked ->
+                scope.launch {
+                    repository.setTextHandlingOptions(options.textHandling.copy(showFlankers = checked))
+                }
+            }
+
+            LanguageDropdown(
+                selected = options.language.defaultLanguageTag,
+                deviceLocaleTag = Locale.getDefault().toLanguageTag(),
+            ) { newValue ->
+                scope.launch {
+                    repository.setLanguageOptions(options.language.copy(defaultLanguageTag = newValue))
+                }
+            }
+            SwitchRow(
+                label = "Auto-detect from HTML",
+                checked = options.language.autoDetectFromHtml,
+            ) { checked ->
+                scope.launch {
+                    repository.setLanguageOptions(options.language.copy(autoDetectFromHtml = checked))
+                }
+            }
+
+            Button(onClick = { resetTarget = ResetTarget.TimingAndFeatures }) {
+                Text("Reset Timing & Features")
             }
         }
-        Button(onClick = { scope.launch { resetAll(repository, isDarkTheme) } }) {
+
+        Button(onClick = { resetTarget = ResetTarget.All }) {
             Text("Reset All")
         }
         Text(
-            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1) and " +
-                "OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1). " +
-                "Copyright (c) Braille Institute and " +
-                "Copyright (c) Abelardo Gonzalez. " +
+            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1), " +
+                "OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1), " +
+                "IBM Plex Sans (IBM, SIL OFL 1.1), " +
+                "Source Sans 3 and Source Serif 4 (Adobe, SIL OFL 1.1), " +
+                "Noto Sans and Noto Serif (Google, SIL OFL 1.1), " +
+                "Literata (Google, SIL OFL 1.1), " +
+                "Merriweather Sans (Sorkin Type, SIL OFL 1.1), " +
+                "Fira Sans (Mozilla, SIL OFL 1.1), " +
+                "Iosevka (be5invis, SIL OFL 1.1), " +
+                "Lexend (Google, SIL OFL 1.1). " +
+                "Copyright (c) Braille Institute, Abelardo Gonzalez, IBM Corp, " +
+                "Adobe Systems Incorporated, Google, Sorkin Type, Mozilla, be5invis. " +
                 "License text: https://scripts.sil.org/OFL",
             style = MaterialTheme.typography.bodySmall,
+        )
+    }
+
+    resetTarget?.let { target ->
+        AlertDialog(
+            onDismissRequest = { resetTarget = null },
+            title = { Text(target.title) },
+            text = { Text(target.message) },
+            confirmButton = {
+                TextButton(onClick = {
+                    resetTarget = null
+                    scope.launch {
+                        when (target) {
+                            ResetTarget.Visual -> resetVisualSettings(repository, isDarkTheme)
+                            ResetTarget.TimingAndFeatures -> resetTimingAndFeatures(repository)
+                            ResetTarget.All -> resetAll(repository, isDarkTheme)
+                        }
+                    }
+                }) {
+                    Text("Reset")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { resetTarget = null }) {
+                    Text("Cancel")
+                }
+            },
         )
     }
 }
@@ -389,6 +458,27 @@ private fun SectionHeader(text: String) {
         style = MaterialTheme.typography.titleMedium,
         modifier = Modifier.semantics { heading() },
     )
+}
+
+@Composable
+private fun SectionFrame(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            SectionHeader(title)
+            content()
+        }
+    }
 }
 
 @Composable
@@ -561,6 +651,16 @@ private fun FontFamilyDropdown(
         listOf(
             "System default",
             "Atkinson Hyperlegible",
+            "IBM Plex Sans",
+            "Source Sans 3",
+            "Source Serif 4",
+            "Noto Sans",
+            "Noto Serif",
+            "Literata",
+            "Merriweather Sans",
+            "Fira Sans",
+            "Iosevka",
+            "Lexend",
             "Sans Serif",
             "Serif",
             "Monospace",
@@ -573,6 +673,16 @@ private fun FontFamilyDropdown(
     val selectedLabel = when (selected) {
         null -> "System default"
         "atkinson-hyperlegible" -> "Atkinson Hyperlegible"
+        "ibm-plex-sans" -> "IBM Plex Sans"
+        "source-sans-3" -> "Source Sans 3"
+        "source-serif-4" -> "Source Serif 4"
+        "noto-sans" -> "Noto Sans"
+        "noto-serif" -> "Noto Serif"
+        "literata" -> "Literata"
+        "merriweather-sans" -> "Merriweather Sans"
+        "fira-sans" -> "Fira Sans"
+        "iosevka" -> "Iosevka"
+        "lexend" -> "Lexend"
         "sans-serif" -> "Sans Serif"
         "serif" -> "Serif"
         "monospace" -> "Monospace"
@@ -613,6 +723,16 @@ private fun FontFamilyDropdown(
                                 when (label) {
                                     "System default" -> null
                                     "Atkinson Hyperlegible" -> "atkinson-hyperlegible"
+                                    "IBM Plex Sans" -> "ibm-plex-sans"
+                                    "Source Sans 3" -> "source-sans-3"
+                                    "Source Serif 4" -> "source-serif-4"
+                                    "Noto Sans" -> "noto-sans"
+                                    "Noto Serif" -> "noto-serif"
+                                    "Literata" -> "literata"
+                                    "Merriweather Sans" -> "merriweather-sans"
+                                    "Fira Sans" -> "fira-sans"
+                                    "Iosevka" -> "iosevka"
+                                    "Lexend" -> "lexend"
                                     "Sans Serif" -> "sans-serif"
                                     "Serif" -> "serif"
                                     "Monospace" -> "monospace"
@@ -622,6 +742,121 @@ private fun FontFamilyDropdown(
                                     else -> null
                                 }
                             )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class LanguageOption(
+    val label: String,
+    val tag: String?,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LanguageDropdown(
+    selected: String?,
+    deviceLocaleTag: String,
+    onSelected: (String?) -> Unit,
+) {
+    val displayLocale = Locale.getDefault()
+    val options = remember(deviceLocaleTag) {
+        val localeOptions = Locale.getAvailableLocales()
+            .asSequence()
+            .mapNotNull { locale ->
+                val tag = locale.toLanguageTag().takeIf { it.isNotBlank() && it != "und" } ?: return@mapNotNull null
+                val label = locale.getDisplayName(displayLocale).takeIf { it.isNotBlank() } ?: tag
+                LanguageOption(label = label, tag = tag)
+            }
+            .distinctBy { it.tag }
+            .sortedBy { it.label.lowercase(displayLocale) }
+            .toList()
+        buildList(localeOptions.size + 1) {
+            add(LanguageOption("Device default ($deviceLocaleTag)", null))
+            addAll(localeOptions)
+        }
+    }
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = options.firstOrNull { it.tag == selected }?.label
+        ?: selected
+        ?: "Device default ($deviceLocaleTag)"
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Default language")
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+        ) {
+            OutlinedTextField(
+                value = selectedLabel,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Default language") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .semantics { contentDescription = "Default language" },
+                singleLine = true,
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                options.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option.label) },
+                        onClick = {
+                            expanded = false
+                            onSelected(option.tag)
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ColorSchemeDropdown(
+    selected: String?,
+    onSelected: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = colorSchemeLabel(selected)
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text("Color scheme")
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+        ) {
+            OutlinedTextField(
+                value = selectedLabel,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Color scheme") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+                    .semantics { contentDescription = "Color scheme" },
+                singleLine = true,
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+            ) {
+                COLOR_SCHEME_OPTIONS.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option.label) },
+                        onClick = {
+                            expanded = false
+                            onSelected(option.id)
                         },
                     )
                 }
@@ -767,18 +1002,34 @@ private fun AlphaPicker(
     }
 }
 
-private suspend fun resetTimings(repository: SettingsRepository) {
+private suspend fun resetTimingAndFeatures(repository: SettingsRepository) {
     repository.setPlaybackOptions(PlaybackOptions.DEFAULT)
+    repository.setTextHandlingOptions(TextHandlingOptions.DEFAULT)
+    repository.setLanguageOptions(LanguageOptions.DEFAULT)
 }
 
-private suspend fun resetColors(
+private suspend fun resetVisualSettings(
     repository: SettingsRepository,
-    currentAppearance: AppearanceOptions,
     isDarkTheme: Boolean,
 ) {
     repository.setAppearanceOptions(
-        solarizedAppearance(currentAppearance, isDarkTheme)
+        applyColorScheme(AppearanceOptions.DEFAULT, AppearanceOptions.DEFAULT.colorSchemeName, isDarkTheme)
     )
+}
+
+private enum class ResetTarget(val title: String, val message: String) {
+    Visual(
+        title = "Reset visual settings?",
+        message = "This will restore the default appearance settings.",
+    ),
+    TimingAndFeatures(
+        title = "Reset timing & features?",
+        message = "This will restore the default timing, text handling, and language settings.",
+    ),
+    All(
+        title = "Reset all settings?",
+        message = "This will restore all settings to their defaults.",
+    ),
 }
 
 private suspend fun resetAll(repository: SettingsRepository, isDarkTheme: Boolean) {
@@ -786,7 +1037,7 @@ private suspend fun resetAll(repository: SettingsRepository, isDarkTheme: Boolea
     repository.setTextHandlingOptions(TextHandlingOptions.DEFAULT)
     repository.setLanguageOptions(LanguageOptions.DEFAULT)
     repository.setAppearanceOptions(
-        solarizedAppearance(AppearanceOptions.DEFAULT, isDarkTheme)
+        applyColorScheme(AppearanceOptions.DEFAULT, AppearanceOptions.DEFAULT.colorSchemeName, isDarkTheme)
     )
 }
 

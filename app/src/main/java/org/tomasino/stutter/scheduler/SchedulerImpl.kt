@@ -93,10 +93,28 @@ class SchedulerImpl(
 
     override fun restart() {
         if (tokens.isEmpty()) return
+        val wasPlaying = mutableState.value == SchedulerState.Playing
+        stopJob()
         currentIndex = 0
         elapsedOffsetMs = 0L
         lastEmittedIndex = -1
-        startJob()
+        if (wasPlaying) {
+            startJob()
+            return
+        }
+
+        val scheduled = ScheduledToken(
+            index = 0,
+            token = tokens[0],
+            targetTimeMs = clock.nowMs(),
+        )
+        if (!mutableEvents.tryEmit(scheduled)) {
+            scope.launch { mutableEvents.emit(scheduled) }
+        }
+        lastEmittedIndex = 0
+        currentIndex = 1.coerceAtMost(tokens.size)
+        elapsedOffsetMs = offsetsMs.getOrElse(0) { 0L }
+        mutableState.value = SchedulerState.Paused
     }
 
     override fun skipForward() {
@@ -109,16 +127,34 @@ class SchedulerImpl(
 
     private fun skipBy(delta: Int) {
         if (tokens.isEmpty()) return
-        val baseIndex = if (mutableState.value == SchedulerState.Playing && lastEmittedIndex >= 0) {
+        val wasPlaying = mutableState.value == SchedulerState.Playing
+        val baseIndex = if (wasPlaying && lastEmittedIndex >= 0) {
             lastEmittedIndex
         } else {
             currentIndex
         }
-        currentIndex = (baseIndex + delta).coerceIn(0, tokens.lastIndex)
-        elapsedOffsetMs = offsetsMs.getOrElse(currentIndex) { 0L }
+        stopJob()
+        val targetIndex = (baseIndex + delta).coerceIn(0, tokens.lastIndex)
+        currentIndex = targetIndex
+        elapsedOffsetMs = offsetsMs.getOrElse(targetIndex) { 0L }
         lastEmittedIndex = -1
-        if (mutableState.value == SchedulerState.Playing) {
+
+        val scheduled = ScheduledToken(
+            index = targetIndex,
+            token = tokens[targetIndex],
+            targetTimeMs = clock.nowMs(),
+        )
+        if (!mutableEvents.tryEmit(scheduled)) {
+            scope.launch { mutableEvents.emit(scheduled) }
+        }
+        lastEmittedIndex = targetIndex
+        currentIndex = (targetIndex + 1).coerceAtMost(tokens.size)
+        elapsedOffsetMs = offsetsMs.getOrElse(targetIndex) { 0L }
+
+        if (wasPlaying) {
             startJob()
+        } else {
+            mutableState.value = SchedulerState.Paused
         }
     }
 

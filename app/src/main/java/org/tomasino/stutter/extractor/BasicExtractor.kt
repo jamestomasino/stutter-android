@@ -12,10 +12,6 @@ class BasicExtractor : Extractor {
 
         removeNoise(document)
 
-        if (isLoginOrPaywall(document)) {
-            return ExtractResult.Error("Login or paywall detected. Paste text instead.")
-        }
-
         val contentText = extractMainText(document)
         if (contentText.isBlank()) {
             return ExtractResult.Error("No readable content")
@@ -55,22 +51,4 @@ class BasicExtractor : Extractor {
         return document.body()?.text()?.trim().orEmpty()
     }
 
-    private fun isLoginOrPaywall(document: Document): Boolean {
-        val bodyText = document.body()?.text()?.lowercase().orEmpty()
-        val keywordHit = LOGIN_KEYWORDS.any { bodyText.contains(it) }
-        val hasPasswordField = document.select("input[type=password]").isNotEmpty()
-        return keywordHit || hasPasswordField
-    }
-
-    private companion object {
-        private val LOGIN_KEYWORDS = listOf(
-            "sign in",
-            "log in",
-            "login",
-            "subscribe",
-            "subscription",
-            "members only",
-            "account required",
-        )
-    }
 }

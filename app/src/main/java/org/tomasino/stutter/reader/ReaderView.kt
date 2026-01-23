@@ -164,6 +164,56 @@ class ReaderView @JvmOverloads constructor(
                     primary = R.font.atkinson_hyperlegible,
                     fallback = R.font.atkinson_hyperlegible_regular,
                 )
+            "ibm-plex-sans", "ibm plex sans" ->
+                loadFont(
+                    primary = R.font.ibm_plex_sans_regular,
+                    fallback = R.font.ibm_plex_sans_regular,
+                )
+            "source-sans-3", "source sans 3" ->
+                loadFont(
+                    primary = R.font.source_sans_3_regular,
+                    fallback = R.font.source_sans_3_regular,
+                )
+            "source-serif-4", "source serif 4" ->
+                loadFont(
+                    primary = R.font.source_serif_4_regular,
+                    fallback = R.font.source_serif_4_regular,
+                )
+            "noto-sans", "noto sans" ->
+                loadFont(
+                    primary = R.font.noto_sans_regular,
+                    fallback = R.font.noto_sans_regular,
+                )
+            "noto-serif", "noto serif" ->
+                loadFont(
+                    primary = R.font.noto_serif_regular,
+                    fallback = R.font.noto_serif_regular,
+                )
+            "literata" ->
+                loadFont(
+                    primary = R.font.literata_regular,
+                    fallback = R.font.literata_regular,
+                )
+            "merriweather-sans", "merriweather sans" ->
+                loadFont(
+                    primary = R.font.merriweather_sans_regular,
+                    fallback = R.font.merriweather_sans_regular,
+                )
+            "fira-sans", "fira sans" ->
+                loadFont(
+                    primary = R.font.fira_sans_regular,
+                    fallback = R.font.fira_sans_regular,
+                )
+            "iosevka" ->
+                loadFont(
+                    primary = R.font.iosevka_regular,
+                    fallback = R.font.iosevka_regular,
+                )
+            "lexend" ->
+                loadFont(
+                    primary = R.font.lexend_regular,
+                    fallback = R.font.lexend_regular,
+                )
             "opendyslexic" ->
                 loadFont(
                     primary = R.font.opendyslexic,
