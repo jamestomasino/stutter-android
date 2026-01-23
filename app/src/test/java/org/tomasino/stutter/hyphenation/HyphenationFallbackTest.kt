@@ -53,4 +53,17 @@ class HyphenationFallbackTest {
         assertTrue(splitTokens.last().isSentenceEnd)
         assertEquals("!", splitTokens.last().text.takeLast(1))
     }
+
+    @Test
+    fun splitLongTokensAddsHyphenToIntermediateSegments() {
+        val tokenizer = IcuTokenizer()
+        val tokens = tokenizer.tokenize("supercalifragilistic", "en")
+        val splitTokens = splitLongTokens(tokens, "en", 6, hyphenator)
+
+        assertTrue(splitTokens.size > 1)
+        splitTokens.dropLast(1).forEach { token ->
+            assertTrue(token.text.endsWith("-"))
+        }
+        assertTrue(splitTokens.last().text.last().isLetter())
+    }
 }

@@ -32,9 +32,18 @@ fun splitLongTokens(
             continue
         }
 
-        cleaned.mapTo(result) { segment ->
-            classifier.classify(segment, languageTag)
+        val lastIndex = cleaned.lastIndex
+        cleaned.forEachIndexed { index, segment ->
+            val text = if (index < lastIndex) appendHyphen(segment) else segment
+            result.add(classifier.classify(text, languageTag))
         }
     }
     return result
+}
+
+private fun appendHyphen(segment: String): String {
+    if (segment.isEmpty()) return segment
+    val last = segment.last()
+    if (last == '-') return segment
+    return if (last.isLetterOrDigit()) "$segment-" else segment
 }

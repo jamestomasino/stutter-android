@@ -20,9 +20,24 @@ class HyphenationPatternRepository(
 
     private fun loadFromResources(normalizedTag: String): HyphenationPatternSet? {
         val resourcePath = when (normalizedTag) {
-            "en", "en-us", "en_us" -> "hyphenation/hyph-en-us.tex"
-            "de", "de-de", "de_1996", "de-1996" -> "hyphenation/hyph-de-1996.tex"
-            "fr", "fr-fr", "fr_fr" -> "hyphenation/hyph-fr.tex"
+            "ar" -> "hyphenation/hyph-ar.tex"
+            "bn" -> "hyphenation/hyph-bn.tex"
+            "de" -> "hyphenation/hyph-de-1996.tex"
+            "en" -> "hyphenation/hyph-en-us.tex"
+            "es" -> "hyphenation/hyph-es.tex"
+            "fa" -> "hyphenation/hyph-fa.tex"
+            "fr" -> "hyphenation/hyph-fr.tex"
+            "hi" -> "hyphenation/hyph-hi.tex"
+            "id" -> "hyphenation/hyph-id.tex"
+            "it" -> "hyphenation/hyph-it.tex"
+            "mr" -> "hyphenation/hyph-mr.tex"
+            "pt" -> "hyphenation/hyph-pt.tex"
+            "ru" -> "hyphenation/hyph-ru.tex"
+            "ta" -> "hyphenation/hyph-ta.tex"
+            "te" -> "hyphenation/hyph-te.tex"
+            "th" -> "hyphenation/hyph-th.tex"
+            "tr" -> "hyphenation/hyph-tr.tex"
+            "vi" -> "hyphenation/hyph-vi.tex"
             else -> return null
         }
         val stream = loader(resourcePath) ?: return null
@@ -31,7 +46,10 @@ class HyphenationPatternRepository(
 
     private fun normalizeTag(languageTag: String?): String? {
         val trimmed = languageTag?.trim()?.takeIf { it.isNotEmpty() } ?: return null
-        return trimmed.replace('_', '-').lowercase(Locale.ROOT)
+        val normalized = trimmed.replace('_', '-')
+        val locale = Locale.forLanguageTag(normalized)
+        val language = locale.language.takeIf { it.isNotEmpty() && it != "und" } ?: return null
+        return language.lowercase(Locale.ROOT)
     }
 }
 
