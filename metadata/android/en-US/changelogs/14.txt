@@ -1,0 +1,3 @@
+- Add a collapsible input shelf that auto-collapses during playback.
+- Move settings into the playback controls and refine button spacing.
+- Add a clear action inside the input field.
