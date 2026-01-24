@@ -5,6 +5,8 @@ import android.graphics.Color as AndroidColor
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -47,8 +50,11 @@ import androidx.compose.material.icons.filled.FastRewind
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.ContentPaste
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
@@ -254,6 +260,9 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     }
 
     val schedulerState by scheduler.state.collectAsState()
+    var manualShelfCollapsed by remember { mutableStateOf(false) }
+    val isPlaybackActive = schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing
+    val shelfCollapsed = if (isPlaybackActive) true else manualShelfCollapsed
 
     Box(
         modifier = Modifier
@@ -267,59 +276,106 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            OutlinedTextField(
-                value = editorText,
-                onValueChange = { editorText = it },
-                label = { Text("Input text") },
-                modifier = Modifier.fillMaxWidth(),
-                maxLines = 6,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                    unfocusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                    focusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                    unfocusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor))
-                        .copy(alpha = 0.7f),
-                    focusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                    unfocusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor))
-                        .copy(alpha = 0.5f),
-                    cursorColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                ),
-            )
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surface,
             ) {
-                Button(onClick = {
-                    inputText = editorText
-                }, colors = buttonColors) {
-                    Text("Load Stutter")
-                }
-                IconButton(
-                    enabled = canPaste,
-                    onClick = {
-                        val currentText = clipboardManager.getText()?.text?.toString().orEmpty()
-                        if (currentText.isNotBlank()) {
-                            editorText = currentText
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = "Input",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        FilledIconButton(
+                            onClick = { manualShelfCollapsed = !manualShelfCollapsed },
+                            enabled = !isPlaybackActive,
+                            colors = iconButtonColors,
+                            modifier = Modifier.size(36.dp),
+                        ) {
+                            val icon = if (shelfCollapsed) {
+                                Icons.Filled.KeyboardArrowDown
+                            } else {
+                                Icons.Filled.KeyboardArrowUp
+                            }
+                            val label = if (shelfCollapsed) "Expand input shelf" else "Collapse input shelf"
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = label,
+                            )
                         }
-                    },
-                    colors = iconButtonColors,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ContentPaste,
-                        contentDescription = "Paste from clipboard",
-                    )
-                }
-                FilledIconButton(
-                    onClick = {
-                        context.startActivity(android.content.Intent(context, MainActivity::class.java))
-                    },
-                    colors = iconButtonColors,
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Open settings",
-                    )
+                    }
+                    AnimatedVisibility(visible = !shelfCollapsed) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OutlinedTextField(
+                                value = editorText,
+                                onValueChange = { editorText = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                maxLines = 6,
+                                trailingIcon = {
+                                    if (editorText.isNotBlank()) {
+                                        IconButton(
+                                            onClick = { editorText = "" },
+                                            colors = IconButtonDefaults.iconButtonColors(
+                                                contentColor = buttonContentColor,
+                                            ),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Clear,
+                                                contentDescription = "Clear input text",
+                                            )
+                                        }
+                                    }
+                                },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                    unfocusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                    focusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                    unfocusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor))
+                                        .copy(alpha = 0.7f),
+                                    focusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                    unfocusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor))
+                                        .copy(alpha = 0.5f),
+                                    cursorColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                ),
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Button(onClick = {
+                                    inputText = editorText
+                                }, colors = buttonColors) {
+                                    Text("Load Stutter")
+                                }
+                                IconButton(
+                                    enabled = canPaste,
+                                    onClick = {
+                                        val currentText = clipboardManager.getText()?.text?.toString().orEmpty()
+                                        if (currentText.isNotBlank()) {
+                                            editorText = currentText
+                                        }
+                                    },
+                                    colors = iconButtonColors,
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ContentPaste,
+                                        contentDescription = "Paste from clipboard",
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
             AndroidView(
@@ -352,7 +408,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
             }
             Row(
                 modifier = Modifier.fillMaxWidth().height(96.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 FilledIconButton(
@@ -371,7 +427,6 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                         contentDescription = "Skip back",
                     )
                 }
-                Spacer(modifier = Modifier.weight(1f))
                 FloatingActionButton(
                     modifier = Modifier.size(72.dp),
                     onClick = {
@@ -398,11 +453,22 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                         )
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
                 Button(onClick = { scheduler.skipForward() }, colors = buttonColors) {
                     Icon(
                         imageVector = Icons.Filled.FastForward,
                         contentDescription = "Skip forward",
+                    )
+                }
+                FilledIconButton(
+                    onClick = {
+                        context.startActivity(android.content.Intent(context, MainActivity::class.java))
+                    },
+                    colors = iconButtonColors,
+                    modifier = Modifier.size(40.dp),
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Settings,
+                        contentDescription = "Open settings",
                     )
                 }
             }
