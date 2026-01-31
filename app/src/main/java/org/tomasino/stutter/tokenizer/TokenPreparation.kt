@@ -14,15 +14,8 @@ fun splitLongTokens(
 
     val result = mutableListOf<Token>()
     for (token in tokens) {
-        val wordLength = classifier.wordLength(token.text, languageTag)
-        if (wordLength <= maxWordLength) {
-            result.add(token)
-            continue
-        }
-
         val hyphenSplit = splitAtHyphenBoundaries(
             text = token.text,
-            maxWordLength = maxWordLength,
         )
         if (hyphenSplit != null) {
             hyphenSplit.forEach { segment ->
@@ -40,6 +33,12 @@ fun splitLongTokens(
                     )
                 }
             }
+            continue
+        }
+
+        val wordLength = classifier.wordLength(token.text, languageTag)
+        if (wordLength <= maxWordLength) {
+            result.add(token)
             continue
         }
 
@@ -82,54 +81,25 @@ private fun splitTokenByHyphenation(
 
 private fun splitAtHyphenBoundaries(
     text: String,
-    maxWordLength: Int,
 ): List<String>? {
     if (!text.any { HYPHEN_CHARS.contains(it) }) return null
 
     val result = mutableListOf<String>()
     val buffer = StringBuilder()
-    var wordCharCount = 0
-    var i = 0
-    while (i < text.length) {
-        val current = text[i]
-        if (HYPHEN_CHARS.contains(current)) {
-            val nextWordLen = nextWordRunLength(text, i + 1)
-            if (nextWordLen > 0) {
-                val prospectiveLen = wordCharCount + nextWordLen
-                if (prospectiveLen > maxWordLength) {
-                    buffer.append(current)
-                    if (buffer.isNotEmpty()) {
-                        result.add(buffer.toString())
-                    }
-                    buffer.setLength(0)
-                    wordCharCount = 0
-                    i++
-                    continue
-                }
-            }
-        }
-
+    for (current in text) {
         buffer.append(current)
-        if (current.isLetterOrDigit()) {
-            wordCharCount++
+        if (HYPHEN_CHARS.contains(current)) {
+            if (buffer.isNotEmpty()) {
+                result.add(buffer.toString())
+            }
+            buffer.setLength(0)
         }
-        i++
     }
     if (buffer.isNotEmpty()) {
         result.add(buffer.toString())
     }
 
     return if (result.size > 1) result else null
-}
-
-private fun nextWordRunLength(text: String, startIndex: Int): Int {
-    if (startIndex >= text.length) return 0
-    if (!text[startIndex].isLetterOrDigit()) return 0
-    var i = startIndex
-    while (i < text.length && text[i].isLetterOrDigit()) {
-        i++
-    }
-    return i - startIndex
 }
 
 private fun appendHyphen(segment: String): String {
@@ -139,4 +109,16 @@ private fun appendHyphen(segment: String): String {
     return if (last.isLetterOrDigit()) "$segment-" else segment
 }
 
-private val HYPHEN_CHARS = setOf('-', '\u2010', '\u2011', '\u2012', '\u2013', '\u2212')
+private val HYPHEN_CHARS = setOf(
+    '-',
+    '\u2010', // hyphen
+    '\u2011', // non-breaking hyphen
+    '\u2012', // figure dash
+    '\u2013', // en dash
+    '\u2014', // em dash
+    '\u2015', // horizontal bar
+    '\u2212', // minus sign
+    '\u2043', // hyphen bullet
+    '\uFE63', // small hyphen-minus
+    '\uFF0D', // fullwidth hyphen-minus
+)

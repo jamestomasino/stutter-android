@@ -74,6 +74,7 @@ import org.tomasino.stutter.settings.StutterOptions
 import org.tomasino.stutter.settings.TextHandlingOptions
 import org.tomasino.stutter.settings.settingsDataStore
 import org.tomasino.stutter.settings.COLOR_SCHEME_OPTIONS
+import org.tomasino.stutter.settings.DEFAULT_COLOR_SCHEME_ID
 import org.tomasino.stutter.settings.applyColorScheme
 import org.tomasino.stutter.settings.colorSchemeLabel
 import org.tomasino.stutter.ui.theme.StutterAndroidTheme
@@ -1013,7 +1014,7 @@ private suspend fun resetVisualSettings(
     isDarkTheme: Boolean,
 ) {
     repository.setAppearanceOptions(
-        applyColorScheme(AppearanceOptions.DEFAULT, AppearanceOptions.DEFAULT.colorSchemeName, isDarkTheme)
+        applyColorScheme(AppearanceOptions.DEFAULT, DEFAULT_COLOR_SCHEME_ID, isDarkTheme)
     )
 }
 
@@ -1037,7 +1038,7 @@ private suspend fun resetAll(repository: SettingsRepository, isDarkTheme: Boolea
     repository.setTextHandlingOptions(TextHandlingOptions.DEFAULT)
     repository.setLanguageOptions(LanguageOptions.DEFAULT)
     repository.setAppearanceOptions(
-        applyColorScheme(AppearanceOptions.DEFAULT, AppearanceOptions.DEFAULT.colorSchemeName, isDarkTheme)
+        applyColorScheme(AppearanceOptions.DEFAULT, DEFAULT_COLOR_SCHEME_ID, isDarkTheme)
     )
 }
 

@@ -92,6 +92,10 @@ class SettingsRepository(
     ) {
         dataStore.edit { prefs ->
             if (prefs[Keys.COLOR_RESET_DONE] == true) return@edit
+            if (prefs[Keys.COLOR_SCHEME] != null) {
+                prefs[Keys.COLOR_RESET_DONE] = true
+                return@edit
+            }
 
             val hasCustomColors = prefs[Keys.BACKGROUND_COLOR] != null ||
                 prefs[Keys.LEFT_COLOR] != null ||

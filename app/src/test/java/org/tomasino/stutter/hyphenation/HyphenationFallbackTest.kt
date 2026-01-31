@@ -82,7 +82,7 @@ class HyphenationFallbackTest {
         val tokens = tokenizer.tokenize("alpha-beta", "en")
         val splitTokens = splitLongTokens(tokens, "en", 10, hyphenator)
 
-        assertEquals(listOf("alpha-beta"), splitTokens.map { it.text })
+        assertEquals(listOf("alpha-", "beta"), splitTokens.map { it.text })
     }
 
     @Test
@@ -92,5 +92,14 @@ class HyphenationFallbackTest {
         val splitTokens = splitLongTokens(tokens, "en", 7, hyphenator)
 
         assertEquals(listOf("alpha–", "beta–", "gamma"), splitTokens.map { it.text })
+    }
+
+    @Test
+    fun splitLongTokensSupportsEmDashes() {
+        val tokenizer = IcuTokenizer()
+        val tokens = tokenizer.tokenize("alpha—beta—gamma", "en")
+        val splitTokens = splitLongTokens(tokens, "en", 7, hyphenator)
+
+        assertEquals(listOf("alpha—", "beta—", "gamma"), splitTokens.map { it.text })
     }
 }

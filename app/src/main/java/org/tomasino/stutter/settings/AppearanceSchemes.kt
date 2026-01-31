@@ -1,12 +1,13 @@
 package org.tomasino.stutter.settings
 
+const val COLOR_SCHEME_DEFAULT = "default"
 const val COLOR_SCHEME_SOLARIZED = "solarized"
 const val COLOR_SCHEME_MONOKAI = "monokai"
 const val COLOR_SCHEME_GRUVBOX = "gruvbox"
 const val COLOR_SCHEME_DRACULA = "dracula"
 const val COLOR_SCHEME_NORD = "nord"
 const val COLOR_SCHEME_PAPERCOLOR = "papercolor"
-const val DEFAULT_COLOR_SCHEME_ID = COLOR_SCHEME_SOLARIZED
+const val DEFAULT_COLOR_SCHEME_ID = COLOR_SCHEME_DEFAULT
 
 data class ColorSchemeOption(
     val id: String,
@@ -14,6 +15,7 @@ data class ColorSchemeOption(
 )
 
 val COLOR_SCHEME_OPTIONS = listOf(
+    ColorSchemeOption(COLOR_SCHEME_DEFAULT, "Default"),
     ColorSchemeOption(COLOR_SCHEME_SOLARIZED, "Solarized"),
     ColorSchemeOption(COLOR_SCHEME_MONOKAI, "Monokai"),
     ColorSchemeOption(COLOR_SCHEME_GRUVBOX, "Gruvbox"),
@@ -24,7 +26,7 @@ val COLOR_SCHEME_OPTIONS = listOf(
 
 fun colorSchemeLabel(schemeId: String?): String {
     val resolvedId = schemeId ?: DEFAULT_COLOR_SCHEME_ID
-    return COLOR_SCHEME_OPTIONS.firstOrNull { it.id == resolvedId }?.label ?: "Solarized"
+    return COLOR_SCHEME_OPTIONS.firstOrNull { it.id == resolvedId }?.label ?: "Default"
 }
 
 fun applyColorScheme(
@@ -59,6 +61,7 @@ private data class AppearanceScheme(
 
 private fun resolveColorScheme(schemeId: String, isDarkTheme: Boolean): AppearanceScheme {
     return when (schemeId) {
+        COLOR_SCHEME_DEFAULT -> defaultScheme()
         COLOR_SCHEME_MONOKAI -> monokai()
         COLOR_SCHEME_GRUVBOX -> if (isDarkTheme) gruvboxDark() else gruvboxLight()
         COLOR_SCHEME_DRACULA -> dracula()
@@ -66,6 +69,18 @@ private fun resolveColorScheme(schemeId: String, isDarkTheme: Boolean): Appearan
         COLOR_SCHEME_PAPERCOLOR -> if (isDarkTheme) papercolorDark() else papercolorLight()
         else -> if (isDarkTheme) solarizedDark() else solarizedLight()
     }
+}
+
+private fun defaultScheme(): AppearanceScheme {
+    return AppearanceScheme(
+        background = 0xFF000000.toInt(),
+        left = 0xFFFFFFFF.toInt(),
+        center = 0xFFFF3366.toInt(),
+        remainder = 0xFFFFFFFF.toInt(),
+        flanker = 0xFFB3B3B3.toInt(),
+        buttonBackground = 0xFF222222.toInt(),
+        buttonText = 0xFF666666.toInt(),
+    )
 }
 
 private fun solarizedLight(): AppearanceScheme {
