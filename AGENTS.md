@@ -33,6 +33,7 @@ Use the Makefile wrappers (preferred) or Gradle tasks directly.
 - Recent commits are short, present-tense statements (e.g., “adds android project”); follow that style.
 - Keep commits scoped and describe intent over implementation details.
 - PRs should include: summary, testing done (`make test`, `make lint`, etc.), and screenshots for UI changes.
+- For releases/versioning, follow `RELEASE.md` and update `metadata/android/en-US/changelogs/` when applicable.
 
 ## Configuration Tips
 - `local.properties` is machine-specific (SDK path) and should not be committed.

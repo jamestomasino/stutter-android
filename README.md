@@ -154,6 +154,12 @@ Notes:
   Secrets for CI signing.
 - Reproducible verification depends on those signature files being present in
   `fdroiddata`.
+- For local release/AAB signing, copy `keystore.properties.example` to
+  `keystore.properties` and fill in the values. This file should not be
+  committed.
+
+For the full release flow across GitHub, F-Droid, Obtanium, and Play Store,
+see `RELEASE.md`.
 
 ---
 

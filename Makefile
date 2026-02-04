@@ -42,6 +42,9 @@ build: ## build debug APK
 release: ## build release APK
 	@$(GRADLEW) --no-daemon assembleRelease
 
+bundle: ## build release AAB
+	@$(GRADLEW) --no-daemon bundleRelease
+
 test: ## run unit tests
 	@$(GRADLEW) --no-daemon test
 
@@ -89,4 +92,4 @@ ci: clean setup check ## local CI pipeline
 fdroid-sync: ## sync fdroiddata metadata/signatures from latest release tag
 	@./scripts/fdroid-sync.sh
 
-.PHONY: help doctor bootstrap setup deps build release test check lint install run debug connected clean ci fdroid-sync
+.PHONY: help doctor bootstrap setup deps build release bundle test check lint install run debug connected clean ci fdroid-sync

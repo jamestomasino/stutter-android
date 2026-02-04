@@ -3,9 +3,27 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+import java.io.FileInputStream
+import java.util.Properties
+
 android {
     namespace = "org.tomasino.stutter"
     compileSdk = 34
+
+    val keystorePropsFile = rootProject.file("keystore.properties")
+    val releaseSigningConfig = if (keystorePropsFile.exists()) {
+        val keystoreProps = Properties().apply {
+            FileInputStream(keystorePropsFile).use { load(it) }
+        }
+        signingConfigs.create("release") {
+            storeFile = file(keystoreProps["storeFile"] as String)
+            storePassword = keystoreProps["storePassword"] as String
+            keyAlias = keystoreProps["keyAlias"] as String
+            keyPassword = keystoreProps["keyPassword"] as String
+        }
+    } else {
+        null
+    }
 
     defaultConfig {
         applicationId = "org.tomasino.stutter"
@@ -20,6 +38,9 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (releaseSigningConfig != null) {
+                signingConfig = releaseSigningConfig
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

@@ -1,3 +1,3 @@
-- Split words on more dash and hyphen characters, including em dashes.
-- Make the app default color scheme match the extension's default palette.
-- Keep reset color actions aligned with the default scheme.
+- Update app icon to the new Stutter design.
+- Add AAB to the release workflow for Play Store uploads.
+- Document the release process and Play Store checklist.
