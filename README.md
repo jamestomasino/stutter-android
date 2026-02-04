@@ -1,9 +1,9 @@
 # Stutter for Android
 
 
-Stutter is a native Android reading app for [Rapid Serial Visual Presentation](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) (RSVP). RSVP is a way to read faster with less eye movement, one word at a time at high speeds.
+Stutter is a native Android reading app for [Rapid Serial Visual Presentation](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) (RSVP). RSVP is a way to read faster with less eye movement, one word at a time.
 
-_This app is inspired by my Stutter browser extension, but it is not a browser and does not attempt to behave like one._
+_This app is inspired by my [Stutter browser extension](https://www.github.com/jamestomasino/stutter)._
 
 ## Privacy first
 - No cookies.
