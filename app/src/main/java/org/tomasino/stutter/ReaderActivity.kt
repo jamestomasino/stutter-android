@@ -62,6 +62,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -140,7 +141,9 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     val extractor = remember { BasicExtractor() }
     val clipboardManager = LocalClipboardManager.current
 
-    val startingText = initialText?.takeIf { it.isNotBlank() } ?: SAMPLE_TEXT
+    val sampleText = stringResource(R.string.sample_text)
+    val loadingText = stringResource(R.string.status_loading)
+    val startingText = initialText?.takeIf { it.isNotBlank() } ?: sampleText
     var inputText by remember { mutableStateOf(startingText) }
     var editorText by remember { mutableStateOf(startingText) }
     var statusMessage by remember { mutableStateOf<String?>(null) }
@@ -179,7 +182,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     ) {
         if (!isSettingsLoaded) return@LaunchedEffect
         if (isUrl(inputText)) {
-            statusMessage = "Loading..."
+            statusMessage = loadingText
             updateTokensForText(statusMessage ?: "")
             val fetchResult = withContext(Dispatchers.IO) { fetcher.fetch(inputText) }
             when (fetchResult) {
@@ -293,7 +296,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            text = "Input",
+                            text = stringResource(R.string.label_input),
                             style = MaterialTheme.typography.titleMedium,
                         )
                         FilledIconButton(
@@ -307,7 +310,11 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                             } else {
                                 Icons.Filled.KeyboardArrowUp
                             }
-                            val label = if (shelfCollapsed) "Expand input shelf" else "Collapse input shelf"
+                            val label = if (shelfCollapsed) {
+                                stringResource(R.string.action_expand_input_shelf)
+                            } else {
+                                stringResource(R.string.action_collapse_input_shelf)
+                            }
                             Icon(
                                 imageVector = icon,
                                 contentDescription = label,
@@ -331,7 +338,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Filled.Clear,
-                                                contentDescription = "Clear input text",
+                                                contentDescription = stringResource(R.string.action_clear_input_text),
                                             )
                                         }
                                     }
@@ -356,7 +363,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                                 Button(onClick = {
                                     inputText = editorText
                                 }, colors = buttonColors) {
-                                    Text("Load Stutter")
+                                    Text(stringResource(R.string.action_load_stutter))
                                 }
                                 IconButton(
                                     enabled = canPaste,
@@ -370,7 +377,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                                 ) {
                                     Icon(
                                         imageVector = Icons.Filled.ContentPaste,
-                                        contentDescription = "Paste from clipboard",
+                                        contentDescription = stringResource(R.string.action_paste_from_clipboard),
                                     )
                                 }
                             }
@@ -418,13 +425,13 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Replay,
-                        contentDescription = "Restart",
+                        contentDescription = stringResource(R.string.action_restart),
                     )
                 }
                 Button(onClick = { scheduler.skipBack() }, colors = buttonColors) {
                     Icon(
                         imageVector = Icons.Filled.FastRewind,
-                        contentDescription = "Skip back",
+                        contentDescription = stringResource(R.string.action_skip_back),
                     )
                 }
                 FloatingActionButton(
@@ -442,13 +449,13 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     if (schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing) {
                         Icon(
                             imageVector = Icons.Filled.Pause,
-                            contentDescription = "Pause",
+                            contentDescription = stringResource(R.string.action_pause),
                             modifier = Modifier.size(48.dp),
                         )
                     } else {
                         Icon(
                             imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = "Play",
+                            contentDescription = stringResource(R.string.action_play),
                             modifier = Modifier.size(48.dp),
                         )
                     }
@@ -456,7 +463,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 Button(onClick = { scheduler.skipForward() }, colors = buttonColors) {
                     Icon(
                         imageVector = Icons.Filled.FastForward,
-                        contentDescription = "Skip forward",
+                        contentDescription = stringResource(R.string.action_skip_forward),
                     )
                 }
                 FilledIconButton(
@@ -468,7 +475,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 ) {
                     Icon(
                         imageVector = Icons.Filled.Settings,
-                        contentDescription = "Open settings",
+                        contentDescription = stringResource(R.string.action_open_settings),
                     )
                 }
             }
@@ -492,7 +499,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                            "WPM",
+                            stringResource(R.string.label_wpm),
                             color = buttonContentColor,
                         )
                         Text(
@@ -522,26 +529,6 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
         }
     }
 }
-
-private const val SAMPLE_TEXT =
-    "Welcome to Stutter. " +
-    "RSVP, or Rapid Serial Visual Presentation, is a way to read where words appear one by one in the same place. " +
-    "This can help your eyes move less, because you are not jumping around the page. " +
-    "People use RSVP to read faster or to focus better when long lines are tiring. " +
-    "It can also make reading easier when you want a steady, predictable pace. " +
-    "Stutter is an RSVP reader that lets you tune timing, language, and appearance, " +
-    "including long-word handling across many languages. " +
-    "The center button plays and pauses, and the restart button returns to the beginning. " +
-    "The left button skips back, and the right button skips forward. " +
-    "To reach settings, tap the gear next to Load Stutter. " +
-    "In settings, Playback controls timing such as WPM and delays, which lets you match the pace to your comfort and attention. " +
-    "Those timing controls exist because different kinds of words and punctuation feel more natural with different pauses. " +
-    "A sentence ending can take a longer breath, while short words or numbers can be slightly faster. " +
-    "Text handling controls word splitting and flankers so long words do not overflow and the next word can be previewed when that helps. " +
-    "Language sets detection and defaults so tokenization, punctuation rules, and hyphenation work correctly for what you are reading. " +
-    "Appearance controls font, size, spacing, and colors so the display is comfortable and readable for your eyes. " +
-    "Stutter stores no reading history and can be used offline. " +
-    "Paste text or a URL above, then tap Load Stutter."
 
 private fun isUrl(value: String): Boolean {
     val trimmed = value.trim()

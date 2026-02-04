@@ -1,5 +1,9 @@
 package org.tomasino.stutter.settings
 
+import android.content.Context
+import androidx.annotation.StringRes
+import org.tomasino.stutter.R
+
 const val COLOR_SCHEME_DEFAULT = "default"
 const val COLOR_SCHEME_SOLARIZED = "solarized"
 const val COLOR_SCHEME_MONOKAI = "monokai"
@@ -11,22 +15,24 @@ const val DEFAULT_COLOR_SCHEME_ID = COLOR_SCHEME_DEFAULT
 
 data class ColorSchemeOption(
     val id: String,
-    val label: String,
+    @StringRes val labelRes: Int,
 )
 
 val COLOR_SCHEME_OPTIONS = listOf(
-    ColorSchemeOption(COLOR_SCHEME_DEFAULT, "Default"),
-    ColorSchemeOption(COLOR_SCHEME_SOLARIZED, "Solarized"),
-    ColorSchemeOption(COLOR_SCHEME_MONOKAI, "Monokai"),
-    ColorSchemeOption(COLOR_SCHEME_GRUVBOX, "Gruvbox"),
-    ColorSchemeOption(COLOR_SCHEME_DRACULA, "Dracula"),
-    ColorSchemeOption(COLOR_SCHEME_NORD, "Nord"),
-    ColorSchemeOption(COLOR_SCHEME_PAPERCOLOR, "Papercolor"),
+    ColorSchemeOption(COLOR_SCHEME_DEFAULT, R.string.color_scheme_default),
+    ColorSchemeOption(COLOR_SCHEME_SOLARIZED, R.string.color_scheme_solarized),
+    ColorSchemeOption(COLOR_SCHEME_MONOKAI, R.string.color_scheme_monokai),
+    ColorSchemeOption(COLOR_SCHEME_GRUVBOX, R.string.color_scheme_gruvbox),
+    ColorSchemeOption(COLOR_SCHEME_DRACULA, R.string.color_scheme_dracula),
+    ColorSchemeOption(COLOR_SCHEME_NORD, R.string.color_scheme_nord),
+    ColorSchemeOption(COLOR_SCHEME_PAPERCOLOR, R.string.color_scheme_papercolor),
 )
 
-fun colorSchemeLabel(schemeId: String?): String {
+fun colorSchemeLabel(context: Context, schemeId: String?): String {
     val resolvedId = schemeId ?: DEFAULT_COLOR_SCHEME_ID
-    return COLOR_SCHEME_OPTIONS.firstOrNull { it.id == resolvedId }?.label ?: "Default"
+    val labelRes = COLOR_SCHEME_OPTIONS.firstOrNull { it.id == resolvedId }?.labelRes
+        ?: R.string.color_scheme_default
+    return context.getString(labelRes)
 }
 
 fun applyColorScheme(

@@ -56,6 +56,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -66,6 +67,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material3.MaterialTheme
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import androidx.annotation.StringRes
 import org.tomasino.stutter.settings.AppearanceOptions
 import org.tomasino.stutter.settings.LanguageOptions
 import org.tomasino.stutter.settings.PlaybackOptions
@@ -116,12 +118,12 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
     ) {
         val context = LocalContext.current
         Button(onClick = { (context as? android.app.Activity)?.finish() }) {
-            Text("Back to Stutter")
+            Text(stringResource(R.string.back_to_stutter))
         }
 
-        SectionFrame(title = "Visual settings") {
+        SectionFrame(title = stringResource(R.string.section_visual_settings)) {
             FloatSliderRow(
-                label = "Base text size (sp)",
+                label = stringResource(R.string.label_base_text_size),
                 value = options.appearance.baseTextSizeSp,
                 min = 16f,
                 max = 72f,
@@ -131,7 +133,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Center scale",
+                label = stringResource(R.string.label_center_scale),
                 value = options.appearance.centerScale,
                 min = 1.0f,
                 max = 2.0f,
@@ -141,7 +143,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
         FloatSliderRow(
-            label = "Letter spacing (em)",
+            label = stringResource(R.string.label_letter_spacing),
             value = options.appearance.letterSpacingEm,
             min = -0.3f,
             max = 0.3f,
@@ -151,7 +153,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Padding (dp)",
+                label = stringResource(R.string.label_padding),
                 value = options.appearance.paddingDp,
                 min = 8f,
                 max = 64f,
@@ -161,7 +163,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             SwitchRow(
-                label = "Bold center letter",
+                label = stringResource(R.string.label_bold_center_letter),
                 checked = options.appearance.boldCenter,
             ) { checked ->
                 scope.launch {
@@ -191,7 +193,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Background color",
+                label = stringResource(R.string.label_background_color),
                 colorValue = options.appearance.backgroundColor,
             ) { newValue ->
                 scope.launch {
@@ -199,7 +201,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Left text color",
+                label = stringResource(R.string.label_left_text_color),
                 colorValue = options.appearance.leftColor,
             ) { newValue ->
                 scope.launch {
@@ -207,7 +209,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Center text color",
+                label = stringResource(R.string.label_center_text_color),
                 colorValue = options.appearance.centerColor,
             ) { newValue ->
                 scope.launch {
@@ -215,7 +217,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Remainder text color",
+                label = stringResource(R.string.label_remainder_text_color),
                 colorValue = options.appearance.remainderColor,
             ) { newValue ->
                 scope.launch {
@@ -223,7 +225,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Flanker text color",
+                label = stringResource(R.string.label_flanker_text_color),
                 colorValue = options.appearance.flankerColor,
             ) { newValue ->
                 scope.launch {
@@ -231,7 +233,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Button background color",
+                label = stringResource(R.string.label_button_background_color),
                 colorValue = options.appearance.buttonBackgroundColor,
             ) { newValue ->
                 scope.launch {
@@ -239,7 +241,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             ColorFieldRow(
-                label = "Button text color",
+                label = stringResource(R.string.label_button_text_color),
                 colorValue = options.appearance.buttonTextColor,
             ) { newValue ->
                 scope.launch {
@@ -248,15 +250,15 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             }
 
             Button(onClick = { resetTarget = ResetTarget.Visual }) {
-                Text("Reset Visual Settings")
+                Text(stringResource(R.string.button_reset_visual_settings))
             }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        SectionFrame(title = "Timing & Features") {
+        SectionFrame(title = stringResource(R.string.section_timing_features)) {
             IntSliderRow(
-                label = "WPM",
+                label = stringResource(R.string.label_wpm),
                 value = options.playback.wpm,
                 min = PlaybackOptions.MIN_WPM,
                 max = PlaybackOptions.MAX_WPM,
@@ -266,7 +268,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             IntSliderRow(
-                label = "Slow start count",
+                label = stringResource(R.string.label_slow_start_count),
                 value = options.playback.slowStartCount,
                 min = PlaybackOptions.MIN_SLOW_START,
                 max = PlaybackOptions.MAX_SLOW_START,
@@ -276,7 +278,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Sentence delay",
+                label = stringResource(R.string.label_sentence_delay),
                 value = options.playback.sentenceDelay,
                 min = PlaybackOptions.MIN_SENTENCE_DELAY,
                 max = PlaybackOptions.MAX_SENTENCE_DELAY,
@@ -286,7 +288,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Other punctuation delay",
+                label = stringResource(R.string.label_other_punctuation_delay),
                 value = options.playback.otherPuncDelay,
                 min = PlaybackOptions.MIN_OTHER_PUNC_DELAY,
                 max = PlaybackOptions.MAX_OTHER_PUNC_DELAY,
@@ -296,7 +298,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Short word delay",
+                label = stringResource(R.string.label_short_word_delay),
                 value = options.playback.shortWordDelay,
                 min = PlaybackOptions.MIN_SHORT_WORD_DELAY,
                 max = PlaybackOptions.MAX_SHORT_WORD_DELAY,
@@ -306,7 +308,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Long word delay",
+                label = stringResource(R.string.label_long_word_delay),
                 value = options.playback.longWordDelay,
                 min = PlaybackOptions.MIN_LONG_WORD_DELAY,
                 max = PlaybackOptions.MAX_LONG_WORD_DELAY,
@@ -316,7 +318,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             FloatSliderRow(
-                label = "Numeric delay",
+                label = stringResource(R.string.label_numeric_delay),
                 value = options.playback.numericDelay,
                 min = PlaybackOptions.MIN_NUMERIC_DELAY,
                 max = PlaybackOptions.MAX_NUMERIC_DELAY,
@@ -326,7 +328,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             IntSliderRow(
-                label = "Skip count",
+                label = stringResource(R.string.label_skip_count),
                 value = options.playback.skipCount,
                 min = PlaybackOptions.MIN_SKIP_COUNT,
                 max = PlaybackOptions.MAX_SKIP_COUNT,
@@ -337,7 +339,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             }
 
             IntSliderRow(
-                label = "Max word length",
+                label = stringResource(R.string.label_max_word_length),
                 value = options.textHandling.maxWordLength,
                 min = TextHandlingOptions.MIN_MAX_WORD_LENGTH,
                 max = TextHandlingOptions.MAX_MAX_WORD_LENGTH,
@@ -347,7 +349,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             SwitchRow(
-                label = "Show flankers",
+                label = stringResource(R.string.label_show_flankers),
                 checked = options.textHandling.showFlankers,
             ) { checked ->
                 scope.launch {
@@ -364,7 +366,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 }
             }
             SwitchRow(
-                label = "Auto-detect from HTML",
+                label = stringResource(R.string.label_auto_detect_html),
                 checked = options.language.autoDetectFromHtml,
             ) { checked ->
                 scope.launch {
@@ -373,27 +375,15 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             }
 
             Button(onClick = { resetTarget = ResetTarget.TimingAndFeatures }) {
-                Text("Reset Timing & Features")
+                Text(stringResource(R.string.button_reset_timing_features))
             }
         }
 
         Button(onClick = { resetTarget = ResetTarget.All }) {
-            Text("Reset All")
+            Text(stringResource(R.string.button_reset_all))
         }
         Text(
-            text = "Font licenses: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1), " +
-                "OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1), " +
-                "IBM Plex Sans (IBM, SIL OFL 1.1), " +
-                "Source Sans 3 and Source Serif 4 (Adobe, SIL OFL 1.1), " +
-                "Noto Sans and Noto Serif (Google, SIL OFL 1.1), " +
-                "Literata (Google, SIL OFL 1.1), " +
-                "Merriweather Sans (Sorkin Type, SIL OFL 1.1), " +
-                "Fira Sans (Mozilla, SIL OFL 1.1), " +
-                "Iosevka (be5invis, SIL OFL 1.1), " +
-                "Lexend (Google, SIL OFL 1.1). " +
-                "Copyright (c) Braille Institute, Abelardo Gonzalez, IBM Corp, " +
-                "Adobe Systems Incorporated, Google, Sorkin Type, Mozilla, be5invis. " +
-                "License text: https://scripts.sil.org/OFL",
+            text = stringResource(R.string.text_font_licenses),
             style = MaterialTheme.typography.bodySmall,
         )
     }
@@ -401,8 +391,8 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
     resetTarget?.let { target ->
         AlertDialog(
             onDismissRequest = { resetTarget = null },
-            title = { Text(target.title) },
-            text = { Text(target.message) },
+            title = { Text(stringResource(target.titleRes)) },
+            text = { Text(stringResource(target.messageRes)) },
             confirmButton = {
                 TextButton(onClick = {
                     resetTarget = null
@@ -414,12 +404,12 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                         }
                     }
                 }) {
-                    Text("Reset")
+                    Text(stringResource(R.string.dialog_reset))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { resetTarget = null }) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.dialog_cancel))
                 }
             },
         )
@@ -441,14 +431,14 @@ private fun SettingsScreenPreviewContent() {
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        SectionHeader("Playback")
-        Text("WPM: ${options.playback.wpm}")
-        SectionHeader("Text handling")
-        Text("Max word length: ${options.textHandling.maxWordLength}")
-        SectionHeader("Language")
-        Text("Auto-detect: ${options.language.autoDetectFromHtml}")
-        SectionHeader("Appearance")
-        Text("Base size: ${options.appearance.baseTextSizeSp}")
+        SectionHeader(stringResource(R.string.section_playback))
+        Text(stringResource(R.string.preview_wpm, options.playback.wpm))
+        SectionHeader(stringResource(R.string.section_text_handling))
+        Text(stringResource(R.string.preview_max_word_length, options.textHandling.maxWordLength))
+        SectionHeader(stringResource(R.string.section_language))
+        Text(stringResource(R.string.preview_auto_detect, options.language.autoDetectFromHtml.toString()))
+        SectionHeader(stringResource(R.string.section_appearance))
+        Text(stringResource(R.string.preview_base_size, options.appearance.baseTextSizeSp.toString()))
     }
 }
 
@@ -587,7 +577,7 @@ private fun ColorFieldRow(
                     textValue = newValue
                     parseColorHex(newValue)?.let(onColorChange)
                 },
-                label = { Text("Hex color (#RRGGBB or #AARRGGBB)") },
+                label = { Text(stringResource(R.string.label_hex_color)) },
                 modifier = Modifier.weight(1f)
                     .onFocusChanged { isEditing = it.isFocused }
                     .semantics { contentDescription = label },
@@ -598,7 +588,7 @@ private fun ColorFieldRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .semantics { contentDescription = "$label preview" },
+                    .semantics { contentDescription = stringResource(R.string.label_color_preview, label) },
             ) {
                 Box(
                     modifier = Modifier
@@ -609,7 +599,7 @@ private fun ColorFieldRow(
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = { isPickerOpen = !isPickerOpen }) {
-                Text(if (isPickerOpen) "Hide" else "Pick")
+                Text(if (isPickerOpen) stringResource(R.string.button_hide) else stringResource(R.string.button_pick))
             }
         }
 
@@ -648,53 +638,48 @@ private fun FontFamilyDropdown(
     selected: String?,
     onSelected: (String?) -> Unit,
 ) {
-    val options = remember {
+    data class FontOption(val label: String, val value: String?)
+    val systemDefaultLabel = stringResource(R.string.font_system_default)
+    val sansSerifLabel = stringResource(R.string.font_sans_serif)
+    val serifLabel = stringResource(R.string.font_serif)
+    val monospaceLabel = stringResource(R.string.font_monospace)
+    val cursiveLabel = stringResource(R.string.font_cursive)
+    val sansSerifCondensedLabel = stringResource(R.string.font_sans_serif_condensed)
+    val options = remember(
+        systemDefaultLabel,
+        sansSerifLabel,
+        serifLabel,
+        monospaceLabel,
+        cursiveLabel,
+        sansSerifCondensedLabel,
+    ) {
         listOf(
-            "System default",
-            "Atkinson Hyperlegible",
-            "IBM Plex Sans",
-            "Source Sans 3",
-            "Source Serif 4",
-            "Noto Sans",
-            "Noto Serif",
-            "Literata",
-            "Merriweather Sans",
-            "Fira Sans",
-            "Iosevka",
-            "Lexend",
-            "Sans Serif",
-            "Serif",
-            "Monospace",
-            "Cursive",
-            "Sans Serif Condensed",
-            "OpenDyslexic",
+            FontOption(systemDefaultLabel, null),
+            FontOption("Atkinson Hyperlegible", "atkinson-hyperlegible"),
+            FontOption("IBM Plex Sans", "ibm-plex-sans"),
+            FontOption("Source Sans 3", "source-sans-3"),
+            FontOption("Source Serif 4", "source-serif-4"),
+            FontOption("Noto Sans", "noto-sans"),
+            FontOption("Noto Serif", "noto-serif"),
+            FontOption("Literata", "literata"),
+            FontOption("Merriweather Sans", "merriweather-sans"),
+            FontOption("Fira Sans", "fira-sans"),
+            FontOption("Iosevka", "iosevka"),
+            FontOption("Lexend", "lexend"),
+            FontOption(sansSerifLabel, "sans-serif"),
+            FontOption(serifLabel, "serif"),
+            FontOption(monospaceLabel, "monospace"),
+            FontOption(cursiveLabel, "cursive"),
+            FontOption(sansSerifCondensedLabel, "sans-serif-condensed"),
+            FontOption("OpenDyslexic", "opendyslexic"),
         )
     }
     var expanded by remember { mutableStateOf(false) }
-    val selectedLabel = when (selected) {
-        null -> "System default"
-        "atkinson-hyperlegible" -> "Atkinson Hyperlegible"
-        "ibm-plex-sans" -> "IBM Plex Sans"
-        "source-sans-3" -> "Source Sans 3"
-        "source-serif-4" -> "Source Serif 4"
-        "noto-sans" -> "Noto Sans"
-        "noto-serif" -> "Noto Serif"
-        "literata" -> "Literata"
-        "merriweather-sans" -> "Merriweather Sans"
-        "fira-sans" -> "Fira Sans"
-        "iosevka" -> "Iosevka"
-        "lexend" -> "Lexend"
-        "sans-serif" -> "Sans Serif"
-        "serif" -> "Serif"
-        "monospace" -> "Monospace"
-        "cursive" -> "Cursive"
-        "sans-serif-condensed" -> "Sans Serif Condensed"
-        "opendyslexic" -> "OpenDyslexic"
-        else -> selected
-    }
+    val selectedLabel = options.firstOrNull { it.value == selected }?.label
+        ?: stringResource(R.string.font_system_default)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Font family")
+        Text(stringResource(R.string.label_font_family))
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -703,46 +688,24 @@ private fun FontFamilyDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Font family") },
+                label = { Text(stringResource(R.string.label_font_family)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = "Font family" },
+                    .semantics { contentDescription = stringResource(R.string.label_font_family) },
                 singleLine = true,
             )
             ExposedDropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
             ) {
-                options.forEach { label ->
+                options.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(label) },
+                        text = { Text(option.label) },
                         onClick = {
                             expanded = false
-                            onSelected(
-                                when (label) {
-                                    "System default" -> null
-                                    "Atkinson Hyperlegible" -> "atkinson-hyperlegible"
-                                    "IBM Plex Sans" -> "ibm-plex-sans"
-                                    "Source Sans 3" -> "source-sans-3"
-                                    "Source Serif 4" -> "source-serif-4"
-                                    "Noto Sans" -> "noto-sans"
-                                    "Noto Serif" -> "noto-serif"
-                                    "Literata" -> "literata"
-                                    "Merriweather Sans" -> "merriweather-sans"
-                                    "Fira Sans" -> "fira-sans"
-                                    "Iosevka" -> "iosevka"
-                                    "Lexend" -> "lexend"
-                                    "Sans Serif" -> "sans-serif"
-                                    "Serif" -> "serif"
-                                    "Monospace" -> "monospace"
-                                    "Cursive" -> "cursive"
-                                    "Sans Serif Condensed" -> "sans-serif-condensed"
-                                    "OpenDyslexic" -> "opendyslexic"
-                                    else -> null
-                                }
-                            )
+                            onSelected(option.value)
                         },
                     )
                 }
@@ -764,7 +727,8 @@ private fun LanguageDropdown(
     onSelected: (String?) -> Unit,
 ) {
     val displayLocale = Locale.getDefault()
-    val options = remember(deviceLocaleTag) {
+    val deviceDefaultLabel = stringResource(R.string.device_default_language, deviceLocaleTag)
+    val options = remember(deviceLocaleTag, deviceDefaultLabel) {
         val localeOptions = Locale.getAvailableLocales()
             .asSequence()
             .mapNotNull { locale ->
@@ -776,17 +740,17 @@ private fun LanguageDropdown(
             .sortedBy { it.label.lowercase(displayLocale) }
             .toList()
         buildList(localeOptions.size + 1) {
-            add(LanguageOption("Device default ($deviceLocaleTag)", null))
+            add(LanguageOption(deviceDefaultLabel, null))
             addAll(localeOptions)
         }
     }
     var expanded by remember { mutableStateOf(false) }
     val selectedLabel = options.firstOrNull { it.tag == selected }?.label
         ?: selected
-        ?: "Device default ($deviceLocaleTag)"
+        ?: deviceDefaultLabel
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Default language")
+        Text(stringResource(R.string.label_default_language))
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -795,12 +759,12 @@ private fun LanguageDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Default language") },
+                label = { Text(stringResource(R.string.label_default_language)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = "Default language" },
+                    .semantics { contentDescription = stringResource(R.string.label_default_language) },
                 singleLine = true,
             )
             ExposedDropdownMenu(
@@ -828,10 +792,11 @@ private fun ColorSchemeDropdown(
     onSelected: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val selectedLabel = colorSchemeLabel(selected)
+    val context = LocalContext.current
+    val selectedLabel = colorSchemeLabel(context, selected)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Color scheme")
+        Text(stringResource(R.string.label_color_scheme))
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -840,12 +805,12 @@ private fun ColorSchemeDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Color scheme") },
+                label = { Text(stringResource(R.string.label_color_scheme)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = "Color scheme" },
+                    .semantics { contentDescription = stringResource(R.string.label_color_scheme) },
                 singleLine = true,
             )
             ExposedDropdownMenu(
@@ -854,7 +819,7 @@ private fun ColorSchemeDropdown(
             ) {
                 COLOR_SCHEME_OPTIONS.forEach { option ->
                     DropdownMenuItem(
-                        text = { Text(option.label) },
+                        text = { Text(stringResource(option.labelRes)) },
                         onClick = {
                             expanded = false
                             onSelected(option.id)
@@ -877,7 +842,7 @@ private fun SaturationValuePicker(
     val indicatorColor = Color.White
     val indicatorStroke = Color.Black.copy(alpha = 0.4f)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Tap color")
+        Text(stringResource(R.string.label_tap_color))
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -933,7 +898,7 @@ private fun HuePicker(
         Color.Red,
     )
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Hue")
+        Text(stringResource(R.string.label_hue))
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -973,7 +938,7 @@ private fun AlphaPicker(
 ) {
     val baseColor = Color(colorFromHsv(hue, saturation, value, 1f))
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text("Alpha")
+        Text(stringResource(R.string.label_alpha))
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1018,18 +983,18 @@ private suspend fun resetVisualSettings(
     )
 }
 
-private enum class ResetTarget(val title: String, val message: String) {
+private enum class ResetTarget(@StringRes val titleRes: Int, @StringRes val messageRes: Int) {
     Visual(
-        title = "Reset visual settings?",
-        message = "This will restore the default appearance settings.",
+        titleRes = R.string.reset_visual_title,
+        messageRes = R.string.reset_visual_message,
     ),
     TimingAndFeatures(
-        title = "Reset timing & features?",
-        message = "This will restore the default timing, text handling, and language settings.",
+        titleRes = R.string.reset_timing_title,
+        messageRes = R.string.reset_timing_message,
     ),
     All(
-        title = "Reset all settings?",
-        message = "This will restore all settings to their defaults.",
+        titleRes = R.string.reset_all_title,
+        messageRes = R.string.reset_all_message,
     ),
 }
 

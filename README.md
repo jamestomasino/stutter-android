@@ -1,41 +1,11 @@
 # Stutter for Android
 
-Stutter is a native Android reading application focused on precise, controlled word timing.  
-It is designed to help users read text one word at a time at high speeds, with accuracy and predictability as primary goals.
 
-This app is a native Android implementation inspired by the Stutter browser extension, but it is not a browser and does not attempt to behave like one.
+Stutter is a native Android reading app for [Rapid Serial Visual Presentation](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) (RSVP). RSVP is a way to read faster with less eye movement, one word at a time at high speeds.
 
----
+_This app is inspired by my Stutter browser extension, but it is not a browser and does not attempt to behave like one._
 
-## What this app is
-
-- A dedicated reader for pasted text, shared text, or fetched article content.
-- A timing instrument, where word presentation timing is deterministic and configurable.
-- A privacy respectful tool that does not track users or store reading history.
-- Fully native Android, written in Kotlin.
-
----
-
-## What this app is not
-
-- Not a web browser.
-- Not an overlay that floats over other apps.
-- Not a content aggregator or reading history manager.
-- Not capable of accessing logged in browser sessions.
-
----
-
-## Core design principles
-
-### Timing accuracy
-Word timing is the core feature.  
-The scheduler uses a monotonic clock with drift correction. UI rendering never controls timing.
-
-### Native only
-There is no JavaScript, no WebView, and no embedded browser engine.  
-All parsing, segmentation, and rendering is done with native libraries.
-
-### Privacy first
+## Privacy first
 - No cookies.
 - No shared browser state.
 - No analytics.
@@ -52,8 +22,6 @@ If you close the app, your content is gone.
   2. User configured default language.
   3. Device locale.
 
----
-
 ## Supported input methods
 
 ### Paste text
@@ -67,108 +35,29 @@ Share a public article URL to Stutter.
 The app will fetch the page and extract the main readable content.
 
 Authenticated or paywalled pages usually cannot be fetched by URL alone.  
-In those cases, paste text instead, or share a PDF if supported.
+In those cases, paste text instead.
 
----
+## Learn more
 
-## Architecture overview
+- Development, build, and release details live in `DEVELOPMENT.md`.
+- Cross-channel release steps are in `RELEASE.md`.
 
-The app is structured as a clear pipeline:
+## Research
 
-```
+Stutter attempts to make use of the latest scientific journal data on rapid serial visual presentation. Some of the works that have influenced the project are:
 
-Input
--> Fetcher (optional)
--> Extractor
--> Language Resolver
--> Tokenizer (ICU)
--> Hyphenator
--> Scheduler
--> Custom Reader View
+- [Optimizing the reading of electronic text using rapid serial visual presentation](https://www.tandfonline.com/doi/abs/10.1080/01449290110069400)
+- [Parafoveal perception during sentence reading? An ERP paradigm using rapid serial visual presentation (RSVP) with flankers](https://onlinelibrary.wiley.com/doi/full/10.1111/j.1469-8986.2010.01082.x)
+- [Temporary suppression of visual processing in an RSVP task: an attentional blink?](https://pubmed.ncbi.nlm.nih.gov/1500880/)
+- [The more your mind wanders, the smaller your attentional blink: An individual differences study](https://journals.sagepub.com/doi/10.1080/17470218.2014.940985)
+- [The Relationship between Reading Strategy Use and Reading Comprehension as Mediated by Reading Rate: The Case of Eye Movement Training by Rapid Serial Visual Presentation (RSVP)](https://eric.ed.gov/?id=EJ1283679)
+- [Rapid serial visual presentation in reading: The case of Spritz](https://www.sciencedirect.com/science/article/pii/S0747563214007663)
+- [Capturing and holding attention: The impact of emotional words in rapid serial visual presentation](https://link.springer.com/article/10.3758/MC.36.1.182)
+- [Perceptual and cognitive factors imposing “speed limits” on reading rate: a study with the rapid serial visual presentation](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0153786)
 
-```
+## Privacy Policy
 
-Each component is isolated and testable.
-
-- Tokenization and scheduling are independent of the UI.
-- Rendering never influences timing.
-- Settings are the only persisted state.
-
----
-
-## Settings
-
-Settings are stored using Jetpack DataStore and include:
-
-- Reading speed and timing multipliers.
-- Long word handling and flanker display.
-- Language defaults.
-- Appearance options like font, size, spacing, and colors.
-
-There is no theme system. Appearance is fully user configurable.
-
----
-
-## Testing and correctness
-
-This repository includes:
-
-- A formal specification in `SPEC.md`.
-- An implementation plan in `PLAN.md`.
-- A test plan in `TESTPLAN.md`.
-
-Core logic is covered by unit tests, including:
-- Tokenization.
-- Hyphenation.
-- Language resolution.
-- Scheduler timing and drift correction.
-
-Timing regressions are treated as release blocking issues.
-
----
-
-## Distribution
-
-This project is intended to be distributed via F-Droid.
-
-All dependencies must be open source and F-Droid compatible.  
-No proprietary SDKs, analytics, or trackers are permitted.
-
-### F-Droid release flow
-
-This repo contains the app source and build tooling. F-Droid metadata and
-signatures live in the separate `fdroiddata` repo.
-
-Release process (reproducible builds):
-
-1) Update `versionCode`/`versionName` in `app/build.gradle.kts`.
-2) Commit and tag `vX.Y.Z` (annotated). The `Android Release` workflow builds,
-   signs, and attaches `app-release-signed.apk` to the GitHub Release.
-3) Run the helper script to sync `fdroiddata` (requires `gh`):
-   `scripts/fdroid-sync.sh`
-   This will download the `fdroid-signatures` artifact, update
-   `metadata/org.tomasino.stutter.yml`, commit, and push a new branch.
-
-Notes:
-- The signing keystore is stored outside the repo and injected via GitHub
-  Secrets for CI signing.
-- Reproducible verification depends on those signature files being present in
-  `fdroiddata`.
-- For local release/AAB signing, copy `keystore.properties.example` to
-  `keystore.properties` and fill in the values. This file should not be
-  committed.
-
-For the full release flow across GitHub, F-Droid, Obtanium, and Play Store,
-see `RELEASE.md`.
-
----
-
-## Status
-
-This project is under active development.  
-The current goal is a stable v1 focused on correctness, clarity, and trust.
-
----
+Stutter collects no user data. Nothing about your usage is stored or transferred to any server. It can be used offline.
 
 ## License
 

@@ -1,0 +1,3 @@
+- Localize all UI and instructional text, with English fallback.
+- Add a screenshot workflow for consistent light/dark captures.
+- Add a development guide and refactor README for users.
