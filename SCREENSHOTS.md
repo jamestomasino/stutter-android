@@ -46,3 +46,11 @@ If you want consistent captures via adb:
 - `adb pull /sdcard/stutter.png <dest>`
 
 Tip: uninstall/reinstall after launcher icon changes to avoid icon cache issues.
+
+## Automated capture (instrumented)
+
+1) Connect a device or emulator.
+2) Run:
+   `make screenshots`
+3) The script pulls PNGs, converts to JPG, and writes:
+   `metadata/android/en-US/images/phoneScreenshots/1.jpg..4.jpg`

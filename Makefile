@@ -82,7 +82,10 @@ debug: ## install, launch, and stream logcat for the app
 	adb logcat --pid $$pid
 
 connected: ## run instrumentation tests
-	@$(GRADLEW) --no-daemon connectedAndroidTest
+	@./scripts/gradlew-java17.sh --no-daemon connectedAndroidTest
+
+screenshots: ## capture screenshots on a connected device
+	@./scripts/screenshots.sh
 
 clean: ## clean build outputs
 	@$(GRADLEW) --no-daemon clean
@@ -92,4 +95,4 @@ ci: clean setup check ## local CI pipeline
 fdroid-sync: ## sync fdroiddata metadata/signatures from latest release tag
 	@./scripts/fdroid-sync.sh
 
-.PHONY: help doctor bootstrap setup deps build release bundle test check lint install run debug connected clean ci fdroid-sync
+.PHONY: help doctor bootstrap setup deps build release bundle test check lint install run debug connected screenshots clean ci fdroid-sync

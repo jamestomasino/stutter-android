@@ -344,15 +344,13 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                                     }
                                 },
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                                    unfocusedTextColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                                    focusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                                    unfocusedLabelColor = Color(contrastTextColor(options.appearance.backgroundColor))
-                                        .copy(alpha = 0.7f),
-                                    focusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor)),
-                                    unfocusedBorderColor = Color(contrastTextColor(options.appearance.backgroundColor))
-                                        .copy(alpha = 0.5f),
-                                    cursorColor = Color(contrastTextColor(options.appearance.backgroundColor)),
+                                    focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                    focusedLabelColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    focusedBorderColor = MaterialTheme.colorScheme.onSurface,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    cursorColor = MaterialTheme.colorScheme.onSurface,
                                 ),
                             )
                             Row(

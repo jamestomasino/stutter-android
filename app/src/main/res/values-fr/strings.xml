@@ -32,7 +32,7 @@
     <string name="dialog_reset">Réinitialiser</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="reset_visual_title">Réinitialiser les paramètres visuels ?</string>
-    <string name="reset_visual_message">Cela restaurera les paramètres d'apparence par défaut.</string>
+    <string name="reset_visual_message">Cela restaurera les paramètres d\'apparence par défaut.</string>
     <string name="reset_timing_title">Réinitialiser le timing et les fonctionnalités ?</string>
     <string name="reset_timing_message">Cela restaurera les paramètres de synchronisation, de gestion du texte et de langue par défaut.</string>
     <string name="reset_all_title">Réinitialiser tous les paramètres ?</string>
@@ -62,8 +62,8 @@
     <string name="label_hue">Teinte</string>
     <string name="label_alpha">Alpha</string>
     <string name="label_input">Entrée</string>
-    <string name="action_expand_input_shelf">Développer l'étagère de saisie</string>
-    <string name="action_collapse_input_shelf">Réduire l'étagère de saisie</string>
+    <string name="action_expand_input_shelf">Développer l\'étagère de saisie</string>
+    <string name="action_collapse_input_shelf">Réduire l\'étagère de saisie</string>
     <string name="action_clear_input_text">Effacer le texte saisi</string>
     <string name="action_load_stutter">Charger Stutter</string>
     <string name="action_paste_from_clipboard">Coller depuis le presse-papiers</string>
@@ -74,7 +74,7 @@
     <string name="action_skip_forward">Avancer</string>
     <string name="action_open_settings">Ouvrir les paramètres</string>
     <string name="status_loading">Chargement...</string>
-    <string name="sample_text">Bienvenue chez Stutter. RSVP, ou Rapid Serial Visual Présentation, est un moyen de lire où les mots apparaissent un par un au même endroit. Cela peut aider vos yeux à moins bouger, car vous ne sautez pas autour de la page. Les gens utilisent RSVP pour lire plus rapidement ou pour mieux se concentrer lorsque les longues files d'attente sont fatigantes. Cela peut également faciliter la lecture lorsque vous souhaitez un rythme régulier et prévisible. Stutter est un lecteur RSVP qui vous permet d'ajuster le timing, la langue et l'apparence, y compris la gestion des mots longs dans de nombreuses langues. Le bouton central joue et fait une pause, et le bouton de redémarrage revient au début. Le bouton gauche revient en arrière et le bouton droit avance. Pour accéder aux paramètres, appuyez sur l'engrenage à côté de Charger Stutter. Dans les paramètres, la lecture contrôle le timing tel que le WPM et les retards, ce qui vous permet d'adapter le rythme à votre confort et à votre attention. Ces contrôles de synchronisation existent parce que différents types de mots et de ponctuation semblent plus naturels avec différentes pauses. La fin d'une phrase peut prendre plus de temps, tandis que des mots ou des chiffres courts peuvent être légèrement plus rapides. La gestion du texte contrôle la division et les flancs des mots afin que les mots longs ne débordent pas et que le mot suivant puisse être prévisualisé lorsque cela aide. La langue définit la détection et les valeurs par défaut afin que la tokenisation, les règles de ponctuation et la césure fonctionnent correctement pour ce que vous lisez. L'apparence contrôle la police, la taille, l'espacement et les couleurs afin que l'affichage soit confortable et lisible pour vos yeux. Stutter ne stocke aucun historique de lecture et peut être utilisé hors ligne. Collez le texte ou une URL ci-dessus, puis appuyez sur Charger Stutter.</string>
+    <string name="sample_text">Bienvenue chez Stutter. RSVP, ou Rapid Serial Visual Présentation, est un moyen de lire où les mots apparaissent un par un au même endroit. Cela peut aider vos yeux à moins bouger, car vous ne sautez pas autour de la page. Les gens utilisent RSVP pour lire plus rapidement ou pour mieux se concentrer lorsque les longues files d\'attente sont fatigantes. Cela peut également faciliter la lecture lorsque vous souhaitez un rythme régulier et prévisible. Stutter est un lecteur RSVP qui vous permet d\'ajuster le timing, la langue et l\'apparence, y compris la gestion des mots longs dans de nombreuses langues. Le bouton central joue et fait une pause, et le bouton de redémarrage revient au début. Le bouton gauche revient en arrière et le bouton droit avance. Pour accéder aux paramètres, appuyez sur l\'engrenage à côté de Charger Stutter. Dans les paramètres, la lecture contrôle le timing tel que le WPM et les retards, ce qui vous permet d\'adapter le rythme à votre confort et à votre attention. Ces contrôles de synchronisation existent parce que différents types de mots et de ponctuation semblent plus naturels avec différentes pauses. La fin d\'une phrase peut prendre plus de temps, tandis que des mots ou des chiffres courts peuvent être légèrement plus rapides. La gestion du texte contrôle la division et les flancs des mots afin que les mots longs ne débordent pas et que le mot suivant puisse être prévisualisé lorsque cela aide. La langue définit la détection et les valeurs par défaut afin que la tokenisation, les règles de ponctuation et la césure fonctionnent correctement pour ce que vous lisez. L\'apparence contrôle la police, la taille, l\'espacement et les couleurs afin que l\'affichage soit confortable et lisible pour vos yeux. Stutter ne stocke aucun historique de lecture et peut être utilisé hors ligne. Collez le texte ou une URL ci-dessus, puis appuyez sur Charger Stutter.</string>
     <string name="color_scheme_default">Par défaut</string>
     <string name="color_scheme_solarized">Solarisé</string>
     <string name="color_scheme_monokai">Monokaï</string>

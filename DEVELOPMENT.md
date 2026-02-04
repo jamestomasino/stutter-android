@@ -63,6 +63,10 @@ Use the Makefile wrappers (preferred) or Gradle tasks directly:
 - `make lint`: run Android lint.
 - `make ci`: clean + setup + check (local CI pipeline).
 
+Note: Instrumented tests currently require JDK 17 due to a UTP/Java 21
+compatibility issue. The `make connected` and `make screenshots` targets
+use `scripts/gradlew-java17.sh` to select a local JDK 17 if available.
+
 ## Distribution
 
 This project is intended to be distributed via F-Droid.

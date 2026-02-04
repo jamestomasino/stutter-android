@@ -551,6 +551,7 @@ private fun ColorFieldRow(
     var saturation by remember { mutableStateOf(0f) }
     var value by remember { mutableStateOf(0f) }
     var alpha by remember { mutableStateOf(1f) }
+    val colorPreviewLabel = stringResource(R.string.label_color_preview, label)
 
     LaunchedEffect(colorValue) {
         val hsv = FloatArray(3)
@@ -588,7 +589,7 @@ private fun ColorFieldRow(
             Box(
                 modifier = Modifier
                     .size(40.dp)
-                    .semantics { contentDescription = stringResource(R.string.label_color_preview, label) },
+                    .semantics { contentDescription = colorPreviewLabel },
             ) {
                 Box(
                     modifier = Modifier
@@ -678,8 +679,9 @@ private fun FontFamilyDropdown(
     val selectedLabel = options.firstOrNull { it.value == selected }?.label
         ?: stringResource(R.string.font_system_default)
 
+    val fontFamilyLabel = stringResource(R.string.label_font_family)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.label_font_family))
+        Text(fontFamilyLabel)
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -688,12 +690,12 @@ private fun FontFamilyDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(stringResource(R.string.label_font_family)) },
+                label = { Text(fontFamilyLabel) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = stringResource(R.string.label_font_family) },
+                    .semantics { contentDescription = fontFamilyLabel },
                 singleLine = true,
             )
             ExposedDropdownMenu(
@@ -749,8 +751,9 @@ private fun LanguageDropdown(
         ?: selected
         ?: deviceDefaultLabel
 
+    val defaultLanguageLabel = stringResource(R.string.label_default_language)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.label_default_language))
+        Text(defaultLanguageLabel)
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -759,12 +762,12 @@ private fun LanguageDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(stringResource(R.string.label_default_language)) },
+                label = { Text(defaultLanguageLabel) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = stringResource(R.string.label_default_language) },
+                    .semantics { contentDescription = defaultLanguageLabel },
                 singleLine = true,
             )
             ExposedDropdownMenu(
@@ -795,8 +798,9 @@ private fun ColorSchemeDropdown(
     val context = LocalContext.current
     val selectedLabel = colorSchemeLabel(context, selected)
 
+    val colorSchemeLabel = stringResource(R.string.label_color_scheme)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.label_color_scheme))
+        Text(colorSchemeLabel)
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = !expanded },
@@ -805,12 +809,12 @@ private fun ColorSchemeDropdown(
                 value = selectedLabel,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text(stringResource(R.string.label_color_scheme)) },
+                label = { Text(colorSchemeLabel) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .menuAnchor()
                     .fillMaxWidth()
-                    .semantics { contentDescription = stringResource(R.string.label_color_scheme) },
+                    .semantics { contentDescription = colorSchemeLabel },
                 singleLine = true,
             )
             ExposedDropdownMenu(

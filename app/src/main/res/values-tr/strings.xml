@@ -1,5 +1,5 @@
 <resources>
-    <string name="back_to_stutter">Stutter'a dön</string>
+    <string name="back_to_stutter">Stutter\'a dön</string>
     <string name="section_visual_settings">Görsel ayarlar</string>
     <string name="label_base_text_size">Temel metin boyutu (sp)</string>
     <string name="label_center_scale">Merkez ölçeği</string>
@@ -25,7 +25,7 @@
     <string name="label_skip_count">Sayımı atla</string>
     <string name="label_max_word_length">Maksimum kelime uzunluğu</string>
     <string name="label_show_flankers">Kanatçıları göster</string>
-    <string name="label_auto_detect_html">HTML'den otomatik algılama</string>
+    <string name="label_auto_detect_html">HTML\'den otomatik algılama</string>
     <string name="button_reset_timing_features">Zamanlamayı ve Özellikleri Sıfırla</string>
     <string name="button_reset_all">Tümünü Sıfırla</string>
     <string name="text_font_licenses">Yazı tipi lisansları: Atkinson Hyperlegible (Braille Institute, SIL OFL 1.1), OpenDyslexic (Abelardo Gonzalez, SIL OFL 1.1), IBM Plex Sans (IBM, SIL OFL 1.1), Source Sans 3 ve Source Serif 4 (Adobe, SIL OFL 1.1), Noto Sans ve Noto Serif (Google, SIL OFL 1.1), Literata (Google, SIL OFL 1.1), Merriweather Sans (Sorkin Type, SIL OFL 1.1), Fira Sans (Mozilla, SIL OFL 1.1), Iosevka (be5invis, SIL OFL 1.1), Lexend (Google, SIL OFL 1.1). Telif Hakkı (c) Braille Institute, Abelardo Gonzalez, IBM Corp, Adobe Systems Incorporated, Google, Sorkin Type, Mozilla, be5invis. Lisans metni: https://scripts.sil.org/OFL</string>
@@ -65,7 +65,7 @@
     <string name="action_expand_input_shelf">Giriş rafını genişlet</string>
     <string name="action_collapse_input_shelf">Giriş rafını daralt</string>
     <string name="action_clear_input_text">Giriş metnini temizle</string>
-    <string name="action_load_stutter">Stutter'ı yükle</string>
+    <string name="action_load_stutter">Stutter\'ı yükle</string>
     <string name="action_paste_from_clipboard">Panodan yapıştır</string>
     <string name="action_restart">Yeniden başlat</string>
     <string name="action_skip_back">Geri atla</string>
@@ -74,7 +74,7 @@
     <string name="action_skip_forward">İleri atla</string>
     <string name="action_open_settings">Ayarları aç</string>
     <string name="status_loading">Yükleniyor...</string>
-    <string name="sample_text">Stutter'a hoş geldiniz. RSVP veya Hızlı Seri Görsel Sunum, kelimelerin aynı yerde tek tek göründüğü yeri okumanın bir yoludur. Bu, sayfanın içinde atlamadığınız için gözlerinizin daha az hareket etmesine yardımcı olabilir. İnsanlar daha hızlı okumak veya uzun satırlar yorucu olduğunda daha iyi odaklanmak için LCV'yi kullanır. Ayrıca istikrarlı ve öngörülebilir bir hız istediğinizde okumayı kolaylaştırabilir. Stutter, birçok dilde uzun sözcük işleme de dahil olmak üzere zamanlamayı, dili ve görünümü ayarlamanıza olanak tanıyan bir RSVP okuyucusudur. Ortadaki düğme oynatılır ve duraklatılır ve yeniden başlatma düğmesi başlangıca döner. Sol düğme geri atlar ve sağ düğme ileri atlar. Ayarlara ulaşmak için Stutter yükle seçeneğinin yanındaki dişliye dokunun. Ayarlarda Oynatma, WPM ve gecikmeler gibi zamanlamayı kontrol ederek tempoyu konforunuza ve dikkatinize göre ayarlamanıza olanak tanır. Bu zamanlama kontrolleri, farklı türdeki kelimelerin ve noktalama işaretlerinin farklı duraklamalarla daha doğal hissettirmesi nedeniyle mevcuttur. Bir cümlenin sonu daha uzun bir nefes alabilirken, kısa kelimeler veya sayılar biraz daha hızlı olabilir. Metin işleme, kelime bölmeyi ve yanları kontrol ederek uzun kelimelerin taşmasını önler ve yardımcı olduğunda bir sonraki kelimenin önizlemesi yapılabilir. Dil, algılamayı ve varsayılanları ayarlar; böylece belirteçleme, noktalama işaretleri ve tireleme, okuduğunuz şey için doğru şekilde çalışır. Görünüm yazı tipini, boyutu, aralığı ve renkleri kontrol ederek ekranın gözleriniz için rahat ve okunabilir olmasını sağlar. Stutter okuma geçmişini saklamaz ve çevrimdışı olarak kullanılabilir. Yukarıdaki metni veya URL'yi yapıştırın ve ardından Stutter Yükle'ye dokunun.</string>
+    <string name="sample_text">Stutter\'a hoş geldiniz. RSVP veya Hızlı Seri Görsel Sunum, kelimelerin aynı yerde tek tek göründüğü yeri okumanın bir yoludur. Bu, sayfanın içinde atlamadığınız için gözlerinizin daha az hareket etmesine yardımcı olabilir. İnsanlar daha hızlı okumak veya uzun satırlar yorucu olduğunda daha iyi odaklanmak için LCV\'yi kullanır. Ayrıca istikrarlı ve öngörülebilir bir hız istediğinizde okumayı kolaylaştırabilir. Stutter, birçok dilde uzun sözcük işleme de dahil olmak üzere zamanlamayı, dili ve görünümü ayarlamanıza olanak tanıyan bir RSVP okuyucusudur. Ortadaki düğme oynatılır ve duraklatılır ve yeniden başlatma düğmesi başlangıca döner. Sol düğme geri atlar ve sağ düğme ileri atlar. Ayarlara ulaşmak için Stutter yükle seçeneğinin yanındaki dişliye dokunun. Ayarlarda Oynatma, WPM ve gecikmeler gibi zamanlamayı kontrol ederek tempoyu konforunuza ve dikkatinize göre ayarlamanıza olanak tanır. Bu zamanlama kontrolleri, farklı türdeki kelimelerin ve noktalama işaretlerinin farklı duraklamalarla daha doğal hissettirmesi nedeniyle mevcuttur. Bir cümlenin sonu daha uzun bir nefes alabilirken, kısa kelimeler veya sayılar biraz daha hızlı olabilir. Metin işleme, kelime bölmeyi ve yanları kontrol ederek uzun kelimelerin taşmasını önler ve yardımcı olduğunda bir sonraki kelimenin önizlemesi yapılabilir. Dil, algılamayı ve varsayılanları ayarlar; böylece belirteçleme, noktalama işaretleri ve tireleme, okuduğunuz şey için doğru şekilde çalışır. Görünüm yazı tipini, boyutu, aralığı ve renkleri kontrol ederek ekranın gözleriniz için rahat ve okunabilir olmasını sağlar. Stutter okuma geçmişini saklamaz ve çevrimdışı olarak kullanılabilir. Yukarıdaki metni veya URL\'yi yapıştırın ve ardından Stutter Yükle\'ye dokunun.</string>
     <string name="color_scheme_default">Varsayılan</string>
     <string name="color_scheme_solarized">Solarize</string>
     <string name="color_scheme_monokai">Monokai</string>
