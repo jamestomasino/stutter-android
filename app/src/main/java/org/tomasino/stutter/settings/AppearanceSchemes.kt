@@ -67,7 +67,7 @@ private data class AppearanceScheme(
 
 private fun resolveColorScheme(schemeId: String, isDarkTheme: Boolean): AppearanceScheme {
     return when (schemeId) {
-        COLOR_SCHEME_DEFAULT -> defaultScheme()
+        COLOR_SCHEME_DEFAULT -> defaultScheme(isDarkTheme)
         COLOR_SCHEME_MONOKAI -> monokai()
         COLOR_SCHEME_GRUVBOX -> if (isDarkTheme) gruvboxDark() else gruvboxLight()
         COLOR_SCHEME_DRACULA -> dracula()
@@ -77,16 +77,28 @@ private fun resolveColorScheme(schemeId: String, isDarkTheme: Boolean): Appearan
     }
 }
 
-private fun defaultScheme(): AppearanceScheme {
-    return AppearanceScheme(
-        background = 0xFF000000.toInt(),
-        left = 0xFFFFFFFF.toInt(),
-        center = 0xFFFF3366.toInt(),
-        remainder = 0xFFFFFFFF.toInt(),
-        flanker = 0xFFB3B3B3.toInt(),
-        buttonBackground = 0xFF222222.toInt(),
-        buttonText = 0xFF666666.toInt(),
-    )
+private fun defaultScheme(isDarkTheme: Boolean): AppearanceScheme {
+    return if (isDarkTheme) {
+        AppearanceScheme(
+            background = 0xFF000000.toInt(),
+            left = 0xFFFFFFFF.toInt(),
+            center = 0xFFFF3366.toInt(),
+            remainder = 0xFFFFFFFF.toInt(),
+            flanker = 0xFFB3B3B3.toInt(),
+            buttonBackground = 0xFF222222.toInt(),
+            buttonText = 0xFF666666.toInt(),
+        )
+    } else {
+        AppearanceScheme(
+            background = 0xFFFFFFFF.toInt(),
+            left = 0xFF111111.toInt(),
+            center = 0xFFCC0033.toInt(),
+            remainder = 0xFF111111.toInt(),
+            flanker = 0xFF777777.toInt(),
+            buttonBackground = 0xFFF0F0F0.toInt(),
+            buttonText = 0xFF555555.toInt(),
+        )
+    }
 }
 
 private fun solarizedLight(): AppearanceScheme {

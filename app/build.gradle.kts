@@ -34,6 +34,10 @@ android {
         versionName = "1.2.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val screenshotUiMode = providers.gradleProperty("screenshotUiMode").orNull
+        if (!screenshotUiMode.isNullOrBlank()) {
+            testInstrumentationRunnerArguments["uiMode"] = screenshotUiMode
+        }
     }
 
     buildTypes {

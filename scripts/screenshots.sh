@@ -8,9 +8,49 @@ DEVICE_DIR="/sdcard/Pictures/StutterScreenshots"
 # Ensure output directory exists
 mkdir -p "$OUT_DIR"
 
-# Run the instrumentation test
+set_mode() {
+  local mode="$1"
+  case "$mode" in
+    light)
+      adb shell cmd uimode night no
+      adb shell settings put secure ui_night_mode 1
+      ;;
+    dark)
+      adb shell cmd uimode night yes
+      adb shell settings put secure ui_night_mode 2
+      ;;
+    auto)
+      adb shell cmd uimode night auto
+      adb shell settings put secure ui_night_mode 0
+      ;;
+    *)
+      echo "Unknown mode: $mode"
+      exit 1
+      ;;
+  esac
+  sleep 2
+}
+
+original_mode="$(adb shell settings get secure ui_night_mode | tr -d '\r')"
+
+# Run the instrumentation test for light mode
+set_mode light
 ./scripts/gradlew-java17.sh --no-daemon connectedAndroidTest \
-  -Pandroid.testInstrumentationRunnerArguments.class=org.tomasino.stutter.ScreenshotCaptureTest
+  -Pandroid.testInstrumentationRunnerArguments.class=org.tomasino.stutter.ScreenshotCaptureTest \
+  -PscreenshotUiMode=light
+
+# Run the instrumentation test for dark mode
+set_mode dark
+./scripts/gradlew-java17.sh --no-daemon connectedAndroidTest \
+  -Pandroid.testInstrumentationRunnerArguments.class=org.tomasino.stutter.ScreenshotCaptureTest \
+  -PscreenshotUiMode=dark
+
+# Restore prior mode
+case "$original_mode" in
+  1) set_mode light ;;
+  2) set_mode dark ;;
+  *) set_mode auto ;;
+esac
 
 # Pull PNGs from device
 adb pull "$DEVICE_DIR" "$OUT_DIR" >/dev/null
