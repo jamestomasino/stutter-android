@@ -31,21 +31,24 @@ jobs:
         run: |
           echo "${{ secrets.RELEASE_KEYSTORE_B64 }}" | base64 -d > release.jks
 
+      - name: Write keystore.properties
+        run: |
+          cat > keystore.properties <<EOF
+          storeFile=release.jks
+          storePassword=${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          keyAlias=${{ secrets.RELEASE_KEY_ALIAS }}
+          keyPassword=${{ secrets.RELEASE_KEY_PASSWORD }}
+          EOF
+
       - name: Build release APK
         run: ./gradlew :app:assembleRelease
 
       - name: Build release AAB
         run: ./gradlew :app:bundleRelease
 
-      - name: Sign APK
+      - name: Copy signed APK
         run: |
-          "${ANDROID_SDK_ROOT}/build-tools/34.0.0/apksigner" sign \
-            --ks release.jks \
-            --ks-key-alias "${{ secrets.RELEASE_KEY_ALIAS }}" \
-            --ks-pass pass:"${{ secrets.RELEASE_KEYSTORE_PASSWORD }}" \
-            --key-pass pass:"${{ secrets.RELEASE_KEY_PASSWORD }}" \
-            --out app-release-signed.apk \
-            app/build/outputs/apk/release/app-release-unsigned.apk
+          cp app/build/outputs/apk/release/app-release.apk app-release-signed.apk
 
       - name: Verify signature
         run: |
