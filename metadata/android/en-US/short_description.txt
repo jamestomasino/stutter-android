@@ -1,1 +1,1 @@
-RSVP reader with precise timing and full control
+Speed-reading app that shows one word at a time with adjustable timing

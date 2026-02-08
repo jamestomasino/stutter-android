@@ -6,7 +6,7 @@ Repo status snapshot: 2026-02-04
 This checklist tracks what is required to publish the app to Google Play. Mark items as complete as they are finished.
 
 ## 1) Play Console & Account
-- [ ] Google Play Developer account created (one-time $25 fee paid)
+- [x] Google Play Developer account created (one-time $25 fee paid)
 - [ ] Developer identity verification completed (individual or organization)
 - [ ] App created in Play Console with correct package name (org.tomasino.stutter)
 - [ ] App ownership, contact email, and support details set
@@ -46,10 +46,10 @@ When the app is created in Play Console:
 - [ ] Promo video (optional)
 
 ## 4) Policy, Privacy, and Compliance
-- [ ] Privacy policy URL published and accessible
+- [x] Privacy policy URL published and accessible
 - [ ] Data Safety form completed in Play Console
-- [ ] Content rating questionnaire completed
-- [ ] Ads declaration completed (if ads are used)
+- [x] Content rating questionnaire completed
+- [x] Ads declaration completed (if ads are used)
 - [ ] App access details filled (if login required)
 - [ ] Intellectual property and trademark review done
 - [ ] Encryption / export compliance answered
