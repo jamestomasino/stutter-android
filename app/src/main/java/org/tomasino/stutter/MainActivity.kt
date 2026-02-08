@@ -110,6 +110,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
     val scope = rememberCoroutineScope()
     val isDarkTheme = isSystemInDarkTheme()
     var resetTarget by remember { mutableStateOf<ResetTarget?>(null) }
+    var showDependencyLicenses by remember { mutableStateOf(false) }
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -386,6 +387,15 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             text = stringResource(R.string.text_font_licenses),
             style = MaterialTheme.typography.bodySmall,
         )
+        TextButton(onClick = { showDependencyLicenses = !showDependencyLicenses }) {
+            Text(stringResource(R.string.text_dependency_licenses_toggle))
+        }
+        if (showDependencyLicenses) {
+            Text(
+                text = stringResource(R.string.text_dependency_licenses),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
     }
 
     resetTarget?.let { target ->

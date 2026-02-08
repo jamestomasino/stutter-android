@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.github.jk1.dependency-license-report") version "2.5"
 }
 
 import java.io.FileInputStream
@@ -29,8 +30,8 @@ android {
         applicationId = "org.tomasino.stutter"
         minSdk = 24
         targetSdk = 35
-        versionCode = 21
-        versionName = "1.2.4"
+        versionCode = 22
+        versionName = "1.2.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,6 +64,14 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.8"
     }
+}
+
+licenseReport {
+    outputDir = layout.buildDirectory.dir("reports/dependency-license").get().asFile.path
+    renderers = arrayOf(
+        com.github.jk1.license.render.TextReportRenderer("licenses.txt"),
+        com.github.jk1.license.render.JsonReportRenderer("licenses.json"),
+    )
 }
 
 dependencies {

@@ -1,0 +1,2 @@
+- Add expandable open-source dependency licenses in Settings.
+- Update build tooling (Gradle, Android Gradle Plugin, Android 35).
