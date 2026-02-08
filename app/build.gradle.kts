@@ -8,7 +8,7 @@ import java.util.Properties
 
 android {
     namespace = "org.tomasino.stutter"
-    compileSdk = 34
+    compileSdk = 35
 
     val keystorePropsFile = rootProject.file("keystore.properties")
     val releaseSigningConfig = if (keystorePropsFile.exists()) {
@@ -28,9 +28,9 @@ android {
     defaultConfig {
         applicationId = "org.tomasino.stutter"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 19
-        versionName = "1.2.2"
+        targetSdk = 35
+        versionCode = 20
+        versionName = "1.2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
