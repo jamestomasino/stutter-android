@@ -1,0 +1,2 @@
+- Disable dependency metadata in APK to satisfy F-Droid checks.
+- Improve automated screenshot capture reliability.
