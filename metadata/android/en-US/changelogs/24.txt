@@ -1,0 +1,1 @@
+- Keep the screen awake only during active playback to prevent dimming or sleep interruptions.

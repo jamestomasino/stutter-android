@@ -37,6 +37,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -62,6 +63,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.dp
@@ -266,6 +268,15 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     var manualShelfCollapsed by remember { mutableStateOf(false) }
     val isPlaybackActive = schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing
     val shelfCollapsed = if (isPlaybackActive) true else manualShelfCollapsed
+    val view = LocalView.current
+
+    DisposableEffect(view, isPlaybackActive) {
+        val previousKeepScreenOn = view.keepScreenOn
+        view.keepScreenOn = previousKeepScreenOn || isPlaybackActive
+        onDispose {
+            view.keepScreenOn = previousKeepScreenOn
+        }
+    }
 
     Box(
         modifier = Modifier
