@@ -32,7 +32,7 @@ This project uses a consistent, repeatable screenshot process. Capture four phon
 
 ## Save locations
 Save into:
-- `metadata/android/en-US/images/phoneScreenshots/`
+- `fastlane/metadata/android/en-US/images/phoneScreenshots/`
 
 Suggested naming:
 - `1.jpg` light theme, homepage loaded
@@ -53,4 +53,4 @@ Tip: uninstall/reinstall after launcher icon changes to avoid icon cache issues.
 2) Run:
    `make screenshots`
 3) The script pulls PNGs, converts to JPG, and writes:
-   `metadata/android/en-US/images/phoneScreenshots/1.jpg..4.jpg`
+   `fastlane/metadata/android/en-US/images/phoneScreenshots/1.jpg..4.jpg`

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-OUT_DIR="${ROOT_DIR}/metadata/android/en-US/images/phoneScreenshots"
+OUT_DIR="${ROOT_DIR}/fastlane/metadata/android/en-US/images/phoneScreenshots"
 DEVICE_DIR="/sdcard/Pictures/StutterScreenshots"
 
 # Ensure output directory exists

@@ -1,0 +1,2 @@
+- Move Play/F-Droid listing metadata to fastlane/metadata/android.
+- Update screenshot and release docs/scripts to use the fastlane metadata path.

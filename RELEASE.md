@@ -60,4 +60,4 @@ launcher resources, do a clean uninstall/reinstall to verify the update.
 
 ## 7) Post-release
 - Monitor issues/reviews and plan the next update.
-- Add/update the Play/F-Droid changelog entry under `metadata/android/en-US/changelogs/`.
+- Add/update the Play/F-Droid changelog entry under `fastlane/metadata/android/en-US/changelogs/`.
