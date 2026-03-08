@@ -5,17 +5,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FDROID_REPO="${FDROID_REPO:-"$ROOT_DIR/../fdroiddata"}"
 FDROID_REMOTE="${FDROID_REMOTE:-origin}"
 FDROID_BRANCH="${FDROID_BRANCH:-master}"
-WORKFLOW_FILE="${WORKFLOW_FILE:-android-release.yml}"
-
-if ! command -v gh >/dev/null 2>&1; then
-  echo "ERROR: gh (GitHub CLI) is required." >&2
-  exit 1
-fi
-
-if ! gh auth status >/dev/null 2>&1; then
-  echo "ERROR: gh is not authenticated. Run 'gh auth login'." >&2
-  exit 1
-fi
 
 if [ ! -d "$FDROID_REPO/.git" ]; then
   echo "ERROR: fdroiddata repo not found at $FDROID_REPO" >&2
@@ -38,21 +27,6 @@ PY
 )
 
 TAG="v${VERSION_NAME}"
-RUN_ID="$(gh run list --workflow "$WORKFLOW_FILE" --branch "$TAG" --status success --limit 1 --json databaseId --jq '.[0].databaseId')"
-if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
-  echo "ERROR: No successful workflow run found for tag $TAG." >&2
-  exit 1
-fi
-
-TMP_DIR="$(mktemp -d)"
-trap 'rm -rf "$TMP_DIR"' EXIT
-
-gh run download "$RUN_ID" -n fdroid-signatures -D "$TMP_DIR"
-
-if [ -z "$(ls -A "$TMP_DIR")" ]; then
-  echo "ERROR: No files found in downloaded fdroid-signatures artifact." >&2
-  exit 1
-fi
 
 if [ -n "$(git -C "$FDROID_REPO" status --porcelain)" ]; then
   echo "ERROR: fdroiddata repo has uncommitted changes." >&2
@@ -69,10 +43,6 @@ if git -C "$FDROID_REPO" show-ref --verify --quiet "refs/heads/$BRANCH"; then
   exit 1
 fi
 git -C "$FDROID_REPO" checkout -b "$BRANCH"
-
-SIG_DEST="$FDROID_REPO/metadata/${APP_ID}/signatures/${VERSION_CODE}"
-mkdir -p "$SIG_DEST"
-cp -a "$TMP_DIR"/. "$SIG_DEST/"
 
 python - <<PY
 import re
@@ -102,8 +72,7 @@ path.write_text(text, encoding="utf-8")
 PY
 
 git -C "$FDROID_REPO" add "metadata/${APP_ID}.yml"
-git -C "$FDROID_REPO" -c core.autocrlf=false add "metadata/${APP_ID}/signatures/${VERSION_CODE}"
 git -C "$FDROID_REPO" commit -m "bump ${APP_ID} to ${VERSION_NAME}"
 git -C "$FDROID_REPO" push -u "$FDROID_REMOTE" "$BRANCH"
 
-echo "fdroiddata updated on branch $BRANCH and pushed to $FDROID_REMOTE."
+echo "fdroiddata metadata updated on branch $BRANCH and pushed to $FDROID_REMOTE."
