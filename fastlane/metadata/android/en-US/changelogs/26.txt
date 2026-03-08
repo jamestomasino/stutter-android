@@ -1,0 +1,4 @@
+- Add paragraph-aware pacing with a new paragraph delay setting.
+- Show paragraph markers on the playback progress scrubber.
+- Add fast scrub seek control and +/- 25 WPM step buttons.
+- Preserve paragraph boundaries better when reading shared URLs.
