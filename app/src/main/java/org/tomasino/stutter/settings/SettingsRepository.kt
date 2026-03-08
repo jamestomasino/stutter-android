@@ -30,6 +30,7 @@ class SettingsRepository(
         dataStore.edit { prefs ->
             prefs[Keys.WPM] = clamped.wpm
             prefs[Keys.SLOW_START_COUNT] = clamped.slowStartCount
+            prefs[Keys.PARAGRAPH_DELAY] = clamped.paragraphDelay
             prefs[Keys.SENTENCE_DELAY] = clamped.sentenceDelay
             prefs[Keys.OTHER_PUNC_DELAY] = clamped.otherPuncDelay
             prefs[Keys.SHORT_WORD_DELAY] = clamped.shortWordDelay
@@ -128,6 +129,7 @@ class SettingsRepository(
         val playback = PlaybackOptions(
             wpm = this[Keys.WPM] ?: PlaybackOptions.DEFAULT.wpm,
             slowStartCount = this[Keys.SLOW_START_COUNT] ?: PlaybackOptions.DEFAULT.slowStartCount,
+            paragraphDelay = this[Keys.PARAGRAPH_DELAY] ?: PlaybackOptions.DEFAULT.paragraphDelay,
             sentenceDelay = this[Keys.SENTENCE_DELAY] ?: PlaybackOptions.DEFAULT.sentenceDelay,
             otherPuncDelay = this[Keys.OTHER_PUNC_DELAY] ?: PlaybackOptions.DEFAULT.otherPuncDelay,
             shortWordDelay = this[Keys.SHORT_WORD_DELAY] ?: PlaybackOptions.DEFAULT.shortWordDelay,
@@ -177,6 +179,7 @@ class SettingsRepository(
     private object Keys {
         val WPM = intPreferencesKey("wpm")
         val SLOW_START_COUNT = intPreferencesKey("slow_start_count")
+        val PARAGRAPH_DELAY = floatPreferencesKey("paragraph_delay")
         val SENTENCE_DELAY = floatPreferencesKey("sentence_delay")
         val OTHER_PUNC_DELAY = floatPreferencesKey("other_punc_delay")
         val SHORT_WORD_DELAY = floatPreferencesKey("short_word_delay")

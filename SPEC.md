@@ -240,8 +240,9 @@ Stored via DataStore.
 
 Defaults and clamps are mandatory.
 
-* `wpm`: Int, default 400, clamp 100..1800
+* `wpm`: Int, default 400, clamp 100..1200
 * `slowStartCount`: Int, default 5, clamp 1..10
+* `paragraphDelay`: Float, default 1.8, clamp 1..10
 * `sentenceDelay`: Float, default 2.5, clamp 1..10
 * `otherPuncDelay`: Float, default 1.5, clamp 1..10
 * `shortWordDelay`: Float, default 1.3, clamp 1..10
@@ -285,6 +286,7 @@ Purely visual, no effect on timing.
 * Scheduler timing must be based on a monotonic clock.
 * Drift over long sessions must be corrected.
 * Pause and resume must not change word order or timing multipliers.
+* Paragraph delay is multiplicative and stacks with sentence/punctuation/word timing multipliers.
 * UI rendering must not influence scheduling.
 
 ---

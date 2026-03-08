@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -89,6 +91,7 @@ import org.tomasino.stutter.tokenizer.Token
 import org.tomasino.stutter.tokenizer.buildTokensForText
 import org.tomasino.stutter.ui.theme.StutterAndroidTheme
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class ReaderActivity : ComponentActivity() {
     private val settingsRepository by lazy {
@@ -263,6 +266,19 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     } else {
         0f
     }
+    val paragraphBoundaryPositions = remember(tokens) {
+        if (tokens.isEmpty()) {
+            emptyList()
+        } else {
+            tokens.mapIndexedNotNull { index, token ->
+                if (token.isParagraphEnd && index < tokens.lastIndex) {
+                    (index + 1).toFloat() / tokens.size.toFloat()
+                } else {
+                    null
+                }
+            }
+        }
+    }
 
     val schedulerState by scheduler.state.collectAsState()
     val isPlaybackActive = schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing
@@ -415,19 +431,38 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     }
                 },
             )
-            Box(
+            Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(2.dp)
-                    .alpha(0.25f)
-                    .background(Color(options.appearance.remainderColor)),
+                    .height(8.dp),
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(progress.coerceIn(0f, 1f))
-                        .fillMaxSize()
-                        .background(Color(options.appearance.centerColor)),
+                val centerY = size.height / 2f
+                val thickness = 2.dp.toPx()
+                val progressX = size.width * progress.coerceIn(0f, 1f)
+
+                drawLine(
+                    color = Color(options.appearance.remainderColor).copy(alpha = 0.25f),
+                    start = Offset(0f, centerY),
+                    end = Offset(size.width, centerY),
+                    strokeWidth = thickness,
                 )
+                drawLine(
+                    color = Color(options.appearance.centerColor),
+                    start = Offset(0f, centerY),
+                    end = Offset(progressX, centerY),
+                    strokeWidth = thickness,
+                )
+
+                val tickHeightPx = 4f
+                paragraphBoundaryPositions.forEach { fraction ->
+                    val x = size.width * fraction.coerceIn(0f, 1f)
+                    drawLine(
+                        color = Color(options.appearance.remainderColor).copy(alpha = 0.75f),
+                        start = Offset(x, centerY - (tickHeightPx / 2f)),
+                        end = Offset(x, centerY + (tickHeightPx / 2f)),
+                        strokeWidth = 1.dp.toPx(),
+                    )
+                }
             }
             Row(
                 modifier = Modifier.fillMaxWidth().height(96.dp),
@@ -526,13 +561,15 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     Slider(
                         value = options.playback.wpm.toFloat(),
                         onValueChange = { newValue ->
+                            val snappedWpm = snapWpmToStep(newValue)
                             scope.launch {
                                 repository.setPlaybackOptions(
-                                    options.playback.copy(wpm = newValue.toInt())
+                                    options.playback.copy(wpm = snappedWpm)
                                 )
                             }
                         },
                         valueRange = PlaybackOptions.MIN_WPM.toFloat()..PlaybackOptions.MAX_WPM.toFloat(),
+                        steps = ((PlaybackOptions.MAX_WPM - PlaybackOptions.MIN_WPM) / WPM_STEP) - 1,
                         colors = SliderDefaults.colors(
                             activeTrackColor = buttonContentColor,
                             inactiveTrackColor = buttonContentColor.copy(alpha = 0.35f),
@@ -562,3 +599,11 @@ private fun contrastTextColor(backgroundColor: Int): Int {
     val luminance = 0.2126 * linearRed + 0.7152 * linearGreen + 0.0722 * linearBlue
     return if (luminance > 0.5) AndroidColor.BLACK else AndroidColor.WHITE
 }
+
+private fun snapWpmToStep(value: Float): Int {
+    val stepOffset = ((value - PlaybackOptions.MIN_WPM) / WPM_STEP.toFloat()).roundToInt()
+    val snapped = PlaybackOptions.MIN_WPM + (stepOffset * WPM_STEP)
+    return snapped.coerceIn(PlaybackOptions.MIN_WPM, PlaybackOptions.MAX_WPM)
+}
+
+private const val WPM_STEP = 25

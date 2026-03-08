@@ -205,6 +205,7 @@ class SchedulerImpl(
 
     private fun computeDelayMs(token: Token, options: PlaybackOptions, index: Int): Long {
         var delayMs = 60000f / options.wpm.toFloat()
+        if (token.isParagraphEnd) delayMs *= options.paragraphDelay
         if (token.isSentenceEnd) delayMs *= options.sentenceDelay
         if (token.isOtherPunctuation) delayMs *= options.otherPuncDelay
         if (token.isShortWord) delayMs *= options.shortWordDelay

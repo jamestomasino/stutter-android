@@ -3,6 +3,7 @@ package org.tomasino.stutter.settings
 data class PlaybackOptions(
     val wpm: Int,
     val slowStartCount: Int,
+    val paragraphDelay: Float,
     val sentenceDelay: Float,
     val otherPuncDelay: Float,
     val shortWordDelay: Float,
@@ -14,6 +15,7 @@ data class PlaybackOptions(
         return copy(
             wpm = clampInt(wpm, MIN_WPM, MAX_WPM),
             slowStartCount = clampInt(slowStartCount, MIN_SLOW_START, MAX_SLOW_START),
+            paragraphDelay = clampFloat(paragraphDelay, MIN_PARAGRAPH_DELAY, MAX_PARAGRAPH_DELAY),
             sentenceDelay = clampFloat(sentenceDelay, MIN_SENTENCE_DELAY, MAX_SENTENCE_DELAY),
             otherPuncDelay = clampFloat(otherPuncDelay, MIN_OTHER_PUNC_DELAY, MAX_OTHER_PUNC_DELAY),
             shortWordDelay = clampFloat(shortWordDelay, MIN_SHORT_WORD_DELAY, MAX_SHORT_WORD_DELAY),
@@ -25,9 +27,11 @@ data class PlaybackOptions(
 
     companion object {
         const val MIN_WPM = 100
-        const val MAX_WPM = 1800
+        const val MAX_WPM = 1200
         const val MIN_SLOW_START = 1
         const val MAX_SLOW_START = 10
+        const val MIN_PARAGRAPH_DELAY = 1f
+        const val MAX_PARAGRAPH_DELAY = 10f
         const val MIN_SENTENCE_DELAY = 1f
         const val MAX_SENTENCE_DELAY = 10f
         const val MIN_OTHER_PUNC_DELAY = 1f
@@ -44,6 +48,7 @@ data class PlaybackOptions(
         val DEFAULT = PlaybackOptions(
             wpm = 400,
             slowStartCount = 5,
+            paragraphDelay = 1.8f,
             sentenceDelay = 2.5f,
             otherPuncDelay = 1.5f,
             shortWordDelay = 1.3f,

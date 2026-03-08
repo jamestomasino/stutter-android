@@ -44,6 +44,26 @@ class TokenPipelineTest {
         assertEquals(listOf(0L, 1000L), events.map { it.targetTimeMs })
     }
 
+    @Test
+    fun marksParagraphBoundariesOnLastTokenOfParagraph() {
+        val tokens = buildTokensForText(
+            text = "First paragraph.\n\nSecond paragraph.",
+            languageTag = "en",
+            maxWordLength = 13,
+            tokenizer = IcuTokenizer(),
+            hyphenator = PatternHyphenator(),
+        )
+
+        assertEquals(
+            listOf("First", "paragraph.", "Second", "paragraph."),
+            tokens.map { it.text },
+        )
+        assertEquals(
+            listOf(false, true, false, true),
+            tokens.map { it.isParagraphEnd },
+        )
+    }
+
     private fun baseOptions(): PlaybackOptions {
         return PlaybackOptions.DEFAULT.copy(
             wpm = 60,

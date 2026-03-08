@@ -18,6 +18,7 @@
     <string name="section_timing_features">Timing &amp; Features</string>
     <string name="label_wpm">WPM</string>
     <string name="label_slow_start_count">Slow start count</string>
+    <string name="label_paragraph_delay">Paragraph delay</string>
     <string name="label_sentence_delay">Sentence delay</string>
     <string name="label_other_punctuation_delay">Other punctuation delay</string>
     <string name="label_short_word_delay">Short word delay</string>

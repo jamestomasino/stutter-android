@@ -7,6 +7,7 @@ data class Token(
     val isNumeric: Boolean,
     val isShortWord: Boolean,
     val isLongWord: Boolean,
+    val isParagraphEnd: Boolean = false,
 )
 
 interface Tokenizer {

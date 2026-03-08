@@ -18,11 +18,12 @@ fun splitLongTokens(
             text = token.text,
         )
         if (hyphenSplit != null) {
+            val splitTokens = mutableListOf<Token>()
             hyphenSplit.forEach { segment ->
                 if (classifier.wordLength(segment, languageTag) <= maxWordLength) {
-                    result.add(classifier.classify(segment, languageTag))
+                    splitTokens.add(classifier.classify(segment, languageTag))
                 } else {
-                    result.addAll(
+                    splitTokens.addAll(
                         splitTokenByHyphenation(
                             text = segment,
                             languageTag = languageTag,
@@ -33,6 +34,7 @@ fun splitLongTokens(
                     )
                 }
             }
+            result.addAll(applyParagraphBoundary(splitTokens, token.isParagraphEnd))
             continue
         }
 
@@ -42,15 +44,14 @@ fun splitLongTokens(
             continue
         }
 
-        result.addAll(
-            splitTokenByHyphenation(
-                text = token.text,
-                languageTag = languageTag,
-                maxWordLength = maxWordLength,
-                hyphenator = hyphenator,
-                classifier = classifier,
-            )
+        val splitTokens = splitTokenByHyphenation(
+            text = token.text,
+            languageTag = languageTag,
+            maxWordLength = maxWordLength,
+            hyphenator = hyphenator,
+            classifier = classifier,
         )
+        result.addAll(applyParagraphBoundary(splitTokens, token.isParagraphEnd))
     }
     return result
 }
@@ -107,6 +108,14 @@ private fun appendHyphen(segment: String): String {
     val last = segment.last()
     if (HYPHEN_CHARS.contains(last)) return segment
     return if (last.isLetterOrDigit()) "$segment-" else segment
+}
+
+private fun applyParagraphBoundary(tokens: List<Token>, isParagraphEnd: Boolean): List<Token> {
+    if (!isParagraphEnd || tokens.isEmpty()) return tokens
+    return tokens.mapIndexed { index, token ->
+        if (index == tokens.lastIndex) token.copy(isParagraphEnd = true)
+        else token.copy(isParagraphEnd = false)
+    }
 }
 
 private val HYPHEN_CHARS = setOf(

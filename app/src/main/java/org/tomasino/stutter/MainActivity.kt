@@ -81,6 +81,7 @@ import org.tomasino.stutter.settings.applyColorScheme
 import org.tomasino.stutter.settings.colorSchemeLabel
 import org.tomasino.stutter.ui.theme.StutterAndroidTheme
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private val settingsRepository by lazy {
@@ -263,6 +264,7 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                 value = options.playback.wpm,
                 min = PlaybackOptions.MIN_WPM,
                 max = PlaybackOptions.MAX_WPM,
+                stepSize = 25,
             ) { newValue ->
                 scope.launch {
                     repository.setPlaybackOptions(options.playback.copy(wpm = newValue))
@@ -276,6 +278,16 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
             ) { newValue ->
                 scope.launch {
                     repository.setPlaybackOptions(options.playback.copy(slowStartCount = newValue))
+                }
+            }
+            FloatSliderRow(
+                label = stringResource(R.string.label_paragraph_delay),
+                value = options.playback.paragraphDelay,
+                min = PlaybackOptions.MIN_PARAGRAPH_DELAY,
+                max = PlaybackOptions.MAX_PARAGRAPH_DELAY,
+            ) { newValue ->
+                scope.launch {
+                    repository.setPlaybackOptions(options.playback.copy(paragraphDelay = newValue))
                 }
             }
             FloatSliderRow(
@@ -488,8 +500,14 @@ private fun IntSliderRow(
     value: Int,
     min: Int,
     max: Int,
+    stepSize: Int? = null,
     onChange: (Int) -> Unit,
 ) {
+    val normalizedStepSize = stepSize?.takeIf { it > 0 }
+    val sliderSteps = normalizedStepSize
+        ?.takeIf { (max - min) % it == 0 }
+        ?.let { ((max - min) / it) - 1 }
+        ?.coerceAtLeast(0)
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -500,8 +518,18 @@ private fun IntSliderRow(
         }
         Slider(
             value = value.toFloat(),
-            onValueChange = { onChange(it.toInt()) },
+            onValueChange = { sliderValue ->
+                val snappedValue = if (normalizedStepSize != null) {
+                    val snappedSteps = ((sliderValue - min.toFloat()) / normalizedStepSize.toFloat())
+                        .roundToInt()
+                    (min + snappedSteps * normalizedStepSize).coerceIn(min, max)
+                } else {
+                    sliderValue.toInt().coerceIn(min, max)
+                }
+                onChange(snappedValue)
+            },
             valueRange = min.toFloat()..max.toFloat(),
+            steps = sliderSteps ?: 0,
             modifier = Modifier.semantics { contentDescription = label },
         )
     }

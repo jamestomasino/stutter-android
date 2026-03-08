@@ -165,6 +165,31 @@ class SchedulerTest {
         assertTrue(events.last().targetTimeMs <= testScheduler.currentTime)
     }
 
+    @Test
+    fun paragraphDelayAppliesOnTopOfBaseTiming() = runTest {
+        val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
+        val tokens = listOf(
+            token("one", isParagraphEnd = true),
+            token("two"),
+        )
+        scheduler.load(
+            tokens,
+            baseOptions().copy(
+                paragraphDelay = 2f,
+            )
+        )
+
+        val events = mutableListOf<ScheduledToken>()
+        val job = launch { scheduler.events.take(2).toList(events) }
+
+        scheduler.play()
+        advanceTimeBy(3000)
+        runCurrent()
+        job.join()
+
+        assertEquals(listOf(0L, 2000L), events.map { it.targetTimeMs })
+    }
+
     private fun baseOptions(): PlaybackOptions {
         return PlaybackOptions.DEFAULT.copy(
             wpm = 60,
@@ -177,7 +202,7 @@ class SchedulerTest {
         )
     }
 
-    private fun token(text: String): Token {
+    private fun token(text: String, isParagraphEnd: Boolean = false): Token {
         return Token(
             text = text,
             isSentenceEnd = false,
@@ -185,6 +210,7 @@ class SchedulerTest {
             isNumeric = false,
             isShortWord = false,
             isLongWord = false,
+            isParagraphEnd = isParagraphEnd,
         )
     }
 }

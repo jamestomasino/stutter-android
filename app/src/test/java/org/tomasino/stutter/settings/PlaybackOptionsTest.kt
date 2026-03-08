@@ -10,6 +10,7 @@ class PlaybackOptionsTest {
 
         assertEquals(400, defaults.wpm)
         assertEquals(5, defaults.slowStartCount)
+        assertEquals(1.8f, defaults.paragraphDelay, 0f)
         assertEquals(2.5f, defaults.sentenceDelay, 0f)
         assertEquals(1.5f, defaults.otherPuncDelay, 0f)
         assertEquals(1.3f, defaults.shortWordDelay, 0f)
@@ -23,6 +24,7 @@ class PlaybackOptionsTest {
         val options = PlaybackOptions(
             wpm = 1,
             slowStartCount = 0,
+            paragraphDelay = 0.05f,
             sentenceDelay = 0.1f,
             otherPuncDelay = 0.2f,
             shortWordDelay = 0.3f,
@@ -33,6 +35,7 @@ class PlaybackOptionsTest {
 
         assertEquals(PlaybackOptions.MIN_WPM, options.wpm)
         assertEquals(PlaybackOptions.MIN_SLOW_START, options.slowStartCount)
+        assertEquals(PlaybackOptions.MIN_PARAGRAPH_DELAY, options.paragraphDelay, 0f)
         assertEquals(PlaybackOptions.MIN_SENTENCE_DELAY, options.sentenceDelay, 0f)
         assertEquals(PlaybackOptions.MIN_OTHER_PUNC_DELAY, options.otherPuncDelay, 0f)
         assertEquals(PlaybackOptions.MIN_SHORT_WORD_DELAY, options.shortWordDelay, 0f)
@@ -46,6 +49,7 @@ class PlaybackOptionsTest {
         val options = PlaybackOptions(
             wpm = 5000,
             slowStartCount = 50,
+            paragraphDelay = 20f,
             sentenceDelay = 20f,
             otherPuncDelay = 20f,
             shortWordDelay = 20f,
@@ -56,6 +60,7 @@ class PlaybackOptionsTest {
 
         assertEquals(PlaybackOptions.MAX_WPM, options.wpm)
         assertEquals(PlaybackOptions.MAX_SLOW_START, options.slowStartCount)
+        assertEquals(PlaybackOptions.MAX_PARAGRAPH_DELAY, options.paragraphDelay, 0f)
         assertEquals(PlaybackOptions.MAX_SENTENCE_DELAY, options.sentenceDelay, 0f)
         assertEquals(PlaybackOptions.MAX_OTHER_PUNC_DELAY, options.otherPuncDelay, 0f)
         assertEquals(PlaybackOptions.MAX_SHORT_WORD_DELAY, options.shortWordDelay, 0f)

@@ -99,6 +99,7 @@ Tests:
 - Resume continues from the same token.
 - Restart resets to token zero.
 - Skip forward and backward move by `skipCount`.
+- Paragraph boundaries apply `paragraphDelay` on top of other timing multipliers.
 
 Drift tests:
 - Over a simulated long run (for example 2 minutes), cumulative drift stays within defined tolerance (example 100 ms).
@@ -175,6 +176,7 @@ Tests:
 - Changing playback settings updates scheduler behavior.
 - Changing appearance settings updates rendering only.
 - Changing text handling options affects token preparation.
+- Paragraph boundaries are indicated on the playback progress line.
 - Input shelf collapse/expand preference persists and is restored on app start.
 - Input shelf auto-collapses during playback, then returns to persisted preference when paused or finished.
 
