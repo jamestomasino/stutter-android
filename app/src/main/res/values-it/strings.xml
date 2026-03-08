@@ -84,4 +84,7 @@
     <string name="color_scheme_papercolor">Colore della carta</string>
     <string name="label_color_preview">Anteprima per %1$s</string>
     <string name="app_name">Stutter</string>
+    <string name="label_paragraph_delay">Paragraph delay</string>
+    <string name="action_decrease_wpm">Decrease WPM</string>
+    <string name="action_increase_wpm">Increase WPM</string>
 </resources>

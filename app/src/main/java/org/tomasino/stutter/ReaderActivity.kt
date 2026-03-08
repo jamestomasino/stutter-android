@@ -57,10 +57,13 @@ import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -452,7 +455,9 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 Canvas(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .padding(horizontal = 10.dp)
+                        .clipToBounds(),
                 ) {
                     val centerY = size.height / 2f
                     val tickHeightPx = 4f
@@ -561,24 +566,69 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                             color = buttonContentColor,
                         )
                     }
-                    Slider(
-                        value = options.playback.wpm.toFloat(),
-                        onValueChange = { newValue ->
-                            val snappedWpm = snapWpmToStep(newValue)
-                            scope.launch {
-                                repository.setPlaybackOptions(
-                                    options.playback.copy(wpm = snappedWpm)
-                                )
-                            }
-                        },
-                        valueRange = PlaybackOptions.MIN_WPM.toFloat()..PlaybackOptions.MAX_WPM.toFloat(),
-                        steps = ((PlaybackOptions.MAX_WPM - PlaybackOptions.MIN_WPM) / WPM_STEP) - 1,
-                        colors = SliderDefaults.colors(
-                            activeTrackColor = buttonContentColor,
-                            inactiveTrackColor = buttonContentColor.copy(alpha = 0.35f),
-                            thumbColor = buttonContentColor,
-                        ),
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        FilledIconButton(
+                            onClick = {
+                                val nextWpm = (options.playback.wpm - WPM_STEP)
+                                    .coerceIn(PlaybackOptions.MIN_WPM, PlaybackOptions.MAX_WPM)
+                                scope.launch {
+                                    repository.setPlaybackOptions(
+                                        options.playback.copy(wpm = nextWpm)
+                                    )
+                                }
+                            },
+                            enabled = options.playback.wpm > PlaybackOptions.MIN_WPM,
+                            colors = iconButtonColors,
+                            modifier = Modifier.size(28.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Remove,
+                                contentDescription = stringResource(R.string.action_decrease_wpm),
+                            )
+                        }
+                        Slider(
+                            value = options.playback.wpm.toFloat(),
+                            onValueChange = { newValue ->
+                                val snappedWpm = snapWpmToStep(newValue)
+                                scope.launch {
+                                    repository.setPlaybackOptions(
+                                        options.playback.copy(wpm = snappedWpm)
+                                    )
+                                }
+                            },
+                            valueRange = PlaybackOptions.MIN_WPM.toFloat()..PlaybackOptions.MAX_WPM.toFloat(),
+                            steps = ((PlaybackOptions.MAX_WPM - PlaybackOptions.MIN_WPM) / WPM_STEP) - 1,
+                            colors = SliderDefaults.colors(
+                                activeTrackColor = buttonContentColor,
+                                inactiveTrackColor = buttonContentColor.copy(alpha = 0.35f),
+                                thumbColor = buttonContentColor,
+                            ),
+                            modifier = Modifier.weight(1f),
+                        )
+                        FilledIconButton(
+                            onClick = {
+                                val nextWpm = (options.playback.wpm + WPM_STEP)
+                                    .coerceIn(PlaybackOptions.MIN_WPM, PlaybackOptions.MAX_WPM)
+                                scope.launch {
+                                    repository.setPlaybackOptions(
+                                        options.playback.copy(wpm = nextWpm)
+                                    )
+                                }
+                            },
+                            enabled = options.playback.wpm < PlaybackOptions.MAX_WPM,
+                            colors = iconButtonColors,
+                            modifier = Modifier.size(28.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = stringResource(R.string.action_increase_wpm),
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))

@@ -34,21 +34,35 @@ class BasicExtractor : Extractor {
     private fun extractMainText(document: Document): String {
         val article = document.selectFirst("article")
         if (article != null) {
-            return article.text()
+            val articleText = extractStructuredText(article)
+            if (articleText.isNotEmpty()) return articleText
         }
 
         val candidates = document.select("main,section,div")
         val best = candidates.maxByOrNull { element ->
-            element.select("p").joinToString(" ") { it.text() }.length
+            extractStructuredText(element).length
         }
 
-        val bestText = best?.select("p")?.joinToString(" ") { it.text() }?.trim().orEmpty()
+        val bestText = best?.let(::extractStructuredText).orEmpty()
         if (bestText.isNotEmpty()) return bestText
 
-        val paragraphText = document.select("p").joinToString(" ") { it.text() }.trim()
+        val paragraphText = document.select("p")
+            .map { it.text().trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString("\n\n")
+            .trim()
         if (paragraphText.isNotEmpty()) return paragraphText
 
-        return document.body()?.text()?.trim().orEmpty()
+        return document.body().text().trim()
     }
 
+    private fun extractStructuredText(root: Element): String {
+        val blocks = root.select("p,blockquote,li,h1,h2,h3,h4,h5,h6,pre")
+            .map { it.text().trim() }
+            .filter { it.isNotEmpty() }
+        if (blocks.isNotEmpty()) {
+            return blocks.joinToString("\n\n")
+        }
+        return root.text().trim()
+    }
 }

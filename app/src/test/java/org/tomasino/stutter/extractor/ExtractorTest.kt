@@ -13,6 +13,7 @@ class ExtractorTest {
         val result = extractor.extract(html) as ExtractResult.Success
 
         assertTrue(result.content.text.contains("quick brown fox"))
+        assertTrue(result.content.text.contains("\n\n"))
         assertEquals("Sample Article", result.content.title)
         assertEquals("en", result.content.languageTag)
     }
@@ -23,6 +24,7 @@ class ExtractorTest {
         val result = extractor.extract(html) as ExtractResult.Success
 
         assertTrue(result.content.text.contains("First paragraph content"))
+        assertTrue(result.content.text.contains("\n\n"))
     }
 
     @Test

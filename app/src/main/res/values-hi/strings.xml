@@ -84,4 +84,7 @@
     <string name="color_scheme_papercolor">कागज़ का रंग</string>
     <string name="label_color_preview">%1$s के लिए पूर्वावलोकन</string>
     <string name="app_name">हकलाना_ब्रांड</string>
+    <string name="label_paragraph_delay">Paragraph delay</string>
+    <string name="action_decrease_wpm">Decrease WPM</string>
+    <string name="action_increase_wpm">Increase WPM</string>
 </resources>

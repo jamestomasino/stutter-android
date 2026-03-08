@@ -84,4 +84,7 @@
     <string name="color_scheme_papercolor">Kağıt rengi</string>
     <string name="label_color_preview">%1$s için önizleme</string>
     <string name="app_name">Stutter</string>
+    <string name="label_paragraph_delay">Paragraph delay</string>
+    <string name="action_decrease_wpm">Decrease WPM</string>
+    <string name="action_increase_wpm">Increase WPM</string>
 </resources>
