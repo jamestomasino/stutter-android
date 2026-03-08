@@ -28,7 +28,7 @@ Each component is isolated and testable.
 Settings are stored using Jetpack DataStore and include:
 
 - Reading speed and timing multipliers.
-- Long word handling and flanker display.
+- Long word handling, flanker display, and persisted input shelf default state.
 - Language defaults.
 - Appearance options like font, size, spacing, and colors.
 

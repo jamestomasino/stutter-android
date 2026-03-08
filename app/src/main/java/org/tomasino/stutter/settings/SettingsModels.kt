@@ -57,6 +57,7 @@ data class PlaybackOptions(
 data class TextHandlingOptions(
     val maxWordLength: Int,
     val showFlankers: Boolean,
+    val inputShelfCollapsed: Boolean,
 ) {
     fun clamped(): TextHandlingOptions {
         return copy(maxWordLength = clampInt(maxWordLength, MIN_MAX_WORD_LENGTH, MAX_MAX_WORD_LENGTH))
@@ -69,6 +70,7 @@ data class TextHandlingOptions(
         val DEFAULT = TextHandlingOptions(
             maxWordLength = 13,
             showFlankers = false,
+            inputShelfCollapsed = false,
         )
     }
 }

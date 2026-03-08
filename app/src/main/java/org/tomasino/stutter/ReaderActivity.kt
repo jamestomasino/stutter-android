@@ -265,9 +265,8 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     }
 
     val schedulerState by scheduler.state.collectAsState()
-    var manualShelfCollapsed by remember { mutableStateOf(false) }
     val isPlaybackActive = schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing
-    val shelfCollapsed = if (isPlaybackActive) true else manualShelfCollapsed
+    val shelfCollapsed = if (isPlaybackActive) true else options.textHandling.inputShelfCollapsed
     val view = LocalView.current
 
     DisposableEffect(view, isPlaybackActive) {
@@ -311,7 +310,15 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                             style = MaterialTheme.typography.titleMedium,
                         )
                         FilledIconButton(
-                            onClick = { manualShelfCollapsed = !manualShelfCollapsed },
+                            onClick = {
+                                scope.launch {
+                                    repository.setTextHandlingOptions(
+                                        options.textHandling.copy(
+                                            inputShelfCollapsed = !options.textHandling.inputShelfCollapsed
+                                        )
+                                    )
+                                }
+                            },
                             enabled = !isPlaybackActive,
                             colors = iconButtonColors,
                             modifier = Modifier.size(36.dp),

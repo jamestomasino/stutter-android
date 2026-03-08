@@ -44,6 +44,7 @@ class SettingsRepository(
         dataStore.edit { prefs ->
             prefs[Keys.MAX_WORD_LENGTH] = clamped.maxWordLength
             prefs[Keys.SHOW_FLANKERS] = clamped.showFlankers
+            prefs[Keys.INPUT_SHELF_COLLAPSED] = clamped.inputShelfCollapsed
         }
     }
 
@@ -138,6 +139,8 @@ class SettingsRepository(
         val textHandling = TextHandlingOptions(
             maxWordLength = this[Keys.MAX_WORD_LENGTH] ?: TextHandlingOptions.DEFAULT.maxWordLength,
             showFlankers = this[Keys.SHOW_FLANKERS] ?: TextHandlingOptions.DEFAULT.showFlankers,
+            inputShelfCollapsed = this[Keys.INPUT_SHELF_COLLAPSED]
+                ?: TextHandlingOptions.DEFAULT.inputShelfCollapsed,
         ).clamped()
 
         val language = LanguageOptions(
@@ -182,6 +185,7 @@ class SettingsRepository(
         val SKIP_COUNT = intPreferencesKey("skip_count")
         val MAX_WORD_LENGTH = intPreferencesKey("max_word_length")
         val SHOW_FLANKERS = booleanPreferencesKey("show_flankers")
+        val INPUT_SHELF_COLLAPSED = booleanPreferencesKey("input_shelf_collapsed")
         val AUTO_DETECT_HTML = booleanPreferencesKey("auto_detect_html")
         val DEFAULT_LANGUAGE_TAG = stringPreferencesKey("default_language_tag")
         val BASE_TEXT_SIZE_SP = floatPreferencesKey("base_text_size_sp")

@@ -175,6 +175,8 @@ Tests:
 - Changing playback settings updates scheduler behavior.
 - Changing appearance settings updates rendering only.
 - Changing text handling options affects token preparation.
+- Input shelf collapse/expand preference persists and is restored on app start.
+- Input shelf auto-collapses during playback, then returns to persisted preference when paused or finished.
 
 Acceptance:
 - No settings change requires app restart.
@@ -191,6 +193,8 @@ Must be verified manually before release:
 - Share public article URL works.
 - Share authenticated article URL fails gracefully with message.
 - Pause, resume, skip, restart work reliably.
+- Input shelf remembers the user-selected default collapse state across app restarts.
+- Input shelf auto-collapses while playing and restores the saved default on pause/finish.
 - Screen stays on during playback.
 - App has no history or recent list.
 - No overlay permissions requested.

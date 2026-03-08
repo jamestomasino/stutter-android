@@ -253,6 +253,13 @@ Defaults and clamps are mandatory.
 
 * `maxWordLength`: Int, default 13, clamp 5..50
 * `showFlankers`: Boolean, default false
+* `inputShelfCollapsed`: Boolean, default false
+
+Input shelf behavior:
+
+* If the user manually collapses or expands the input shelf, that state becomes the new default.
+* During playback, the shelf auto-collapses.
+* When playback pauses or finishes, the shelf returns to the persisted default state.
 
 ### 5.3 LanguageOptions
 
