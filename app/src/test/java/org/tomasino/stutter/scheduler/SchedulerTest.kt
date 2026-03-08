@@ -190,6 +190,45 @@ class SchedulerTest {
         assertEquals(listOf(0L, 2000L), events.map { it.targetTimeMs })
     }
 
+    @Test
+    fun seekWhilePausedEmitsTargetAndStaysPaused() = runTest {
+        val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
+        val tokens = listOf(token("one"), token("two"), token("three"))
+        scheduler.load(tokens, baseOptions())
+
+        val events = mutableListOf<ScheduledToken>()
+        val job = launch { scheduler.events.take(1).toList(events) }
+        runCurrent()
+
+        scheduler.seekTo(2)
+        runCurrent()
+        job.join()
+
+        assertEquals(listOf(2), events.map { it.index })
+        assertEquals(SchedulerState.Paused, scheduler.state.value)
+    }
+
+    @Test
+    fun seekWhilePlayingContinuesPlaybackFromTarget() = runTest {
+        val scheduler = SchedulerImpl(this, TestMonotonicClock(testScheduler))
+        val tokens = listOf(token("one"), token("two"), token("three"))
+        scheduler.load(tokens, baseOptions())
+
+        val events = mutableListOf<ScheduledToken>()
+        val job = launch { scheduler.events.take(3).toList(events) }
+
+        scheduler.play()
+        runCurrent()
+        scheduler.seekTo(1)
+        runCurrent()
+        advanceTimeBy(2000)
+        runCurrent()
+        job.join()
+
+        assertEquals(listOf(0, 1, 2), events.map { it.index })
+        assertEquals(SchedulerState.Finished, scheduler.state.value)
+    }
+
     private fun baseOptions(): PlaybackOptions {
         return PlaybackOptions.DEFAULT.copy(
             wpm = 60,

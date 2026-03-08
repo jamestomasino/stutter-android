@@ -28,6 +28,7 @@ interface Scheduler {
     fun pause()
     fun resume()
     fun restart()
+    fun seekTo(index: Int)
     fun skipForward()
     fun skipBack()
 }

@@ -61,7 +61,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -261,11 +260,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
         disabledContainerColor = buttonContainerColor.copy(alpha = 0.4f),
         disabledContentColor = buttonContentColor.copy(alpha = 0.4f),
     )
-    val progress = if (tokens.isNotEmpty()) {
-        (currentIndex + 1).coerceIn(0, tokens.size).toFloat() / tokens.size.toFloat()
-    } else {
-        0f
-    }
+    val progress = tokenIndexToFraction(currentIndex, tokens.size)
     val paragraphBoundaryPositions = remember(tokens) {
         if (tokens.isEmpty()) {
             emptyList()
@@ -431,37 +426,45 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                     }
                 },
             )
-            Canvas(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(8.dp),
+                    .height(20.dp),
             ) {
-                val centerY = size.height / 2f
-                val thickness = 2.dp.toPx()
-                val progressX = size.width * progress.coerceIn(0f, 1f)
-
-                drawLine(
-                    color = Color(options.appearance.remainderColor).copy(alpha = 0.25f),
-                    start = Offset(0f, centerY),
-                    end = Offset(size.width, centerY),
-                    strokeWidth = thickness,
+                Slider(
+                    value = progress,
+                    onValueChange = { fraction ->
+                        if (tokens.isEmpty()) return@Slider
+                        val targetIndex = fractionToTokenIndex(fraction, tokens.size)
+                        if (targetIndex != currentIndex) {
+                            scheduler.seekTo(targetIndex)
+                        }
+                    },
+                    valueRange = 0f..1f,
+                    enabled = tokens.isNotEmpty(),
+                    colors = SliderDefaults.colors(
+                        activeTrackColor = Color(options.appearance.centerColor),
+                        inactiveTrackColor = Color(options.appearance.remainderColor).copy(alpha = 0.25f),
+                        thumbColor = buttonContentColor,
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
                 )
-                drawLine(
-                    color = Color(options.appearance.centerColor),
-                    start = Offset(0f, centerY),
-                    end = Offset(progressX, centerY),
-                    strokeWidth = thickness,
-                )
-
-                val tickHeightPx = 4f
-                paragraphBoundaryPositions.forEach { fraction ->
-                    val x = size.width * fraction.coerceIn(0f, 1f)
-                    drawLine(
-                        color = Color(options.appearance.remainderColor).copy(alpha = 0.75f),
-                        start = Offset(x, centerY - (tickHeightPx / 2f)),
-                        end = Offset(x, centerY + (tickHeightPx / 2f)),
-                        strokeWidth = 1.dp.toPx(),
-                    )
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxSize(),
+                ) {
+                    val centerY = size.height / 2f
+                    val tickHeightPx = 4f
+                    paragraphBoundaryPositions.forEach { fraction ->
+                        val x = size.width * fraction.coerceIn(0f, 1f)
+                        drawLine(
+                            color = Color(options.appearance.remainderColor).copy(alpha = 0.75f),
+                            start = Offset(x, centerY - (tickHeightPx / 2f)),
+                            end = Offset(x, centerY + (tickHeightPx / 2f)),
+                            strokeWidth = 1.dp.toPx(),
+                        )
+                    }
                 }
             }
             Row(
@@ -604,6 +607,18 @@ private fun snapWpmToStep(value: Float): Int {
     val stepOffset = ((value - PlaybackOptions.MIN_WPM) / WPM_STEP.toFloat()).roundToInt()
     val snapped = PlaybackOptions.MIN_WPM + (stepOffset * WPM_STEP)
     return snapped.coerceIn(PlaybackOptions.MIN_WPM, PlaybackOptions.MAX_WPM)
+}
+
+private fun tokenIndexToFraction(index: Int, totalTokens: Int): Float {
+    if (totalTokens <= 1) return 0f
+    val clampedIndex = index.coerceIn(0, totalTokens - 1)
+    return clampedIndex.toFloat() / (totalTokens - 1).toFloat()
+}
+
+private fun fractionToTokenIndex(fraction: Float, totalTokens: Int): Int {
+    if (totalTokens <= 1) return 0
+    val clamped = fraction.coerceIn(0f, 1f)
+    return (clamped * (totalTokens - 1).toFloat()).roundToInt()
 }
 
 private const val WPM_STEP = 25

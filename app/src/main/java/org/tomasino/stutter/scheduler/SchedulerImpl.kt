@@ -125,6 +125,12 @@ class SchedulerImpl(
         skipBy(-options.skipCount)
     }
 
+    override fun seekTo(index: Int) {
+        if (tokens.isEmpty()) return
+        val targetIndex = index.coerceIn(0, tokens.lastIndex)
+        jumpToIndex(targetIndex)
+    }
+
     private fun skipBy(delta: Int) {
         if (tokens.isEmpty()) return
         val wasPlaying = mutableState.value == SchedulerState.Playing
@@ -133,8 +139,14 @@ class SchedulerImpl(
         } else {
             currentIndex
         }
-        stopJob()
         val targetIndex = (baseIndex + delta).coerceIn(0, tokens.lastIndex)
+        jumpToIndex(targetIndex)
+    }
+
+    private fun jumpToIndex(targetIndex: Int) {
+        if (tokens.isEmpty()) return
+        val wasPlaying = mutableState.value == SchedulerState.Playing
+        stopJob()
         currentIndex = targetIndex
         elapsedOffsetMs = offsetsMs.getOrElse(targetIndex) { 0L }
         lastEmittedIndex = -1
