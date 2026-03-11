@@ -1,5 +1,8 @@
 # Stutter for Android
 
+[![Get it on Google Play](https://img.shields.io/badge/Google%20Play-Stutter-34A853?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=org.tomasino.stutter)
+[![Get it on F-Droid](https://img.shields.io/badge/F--Droid-Stutter-1976D2?logo=f-droid&logoColor=white)](https://f-droid.org/packages/org.tomasino.stutter/)
+[![Add to Obtainium](https://img.shields.io/badge/Obtainium-Add%20App-3DDC84?logo=android&logoColor=white)](https://apps.obtainium.imranr.dev/redirect.html?r=obtainium://add/https://github.com/jamestomasino/stutter-android)
 
 Stutter is a native Android reading app for [Rapid Serial Visual Presentation](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) (RSVP). RSVP is a way to read faster with less eye movement, one word at a time.
 
