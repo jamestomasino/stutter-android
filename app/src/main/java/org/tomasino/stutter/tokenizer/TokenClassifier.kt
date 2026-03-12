@@ -15,7 +15,7 @@ class TokenClassifier {
         val nonWordPunc = segments.filter { !it.isWordLike && !it.isWhitespace }
         val hasOtherPunc = nonWordPunc.isNotEmpty() && !endsSentence
 
-        val isNumeric = wordLikeSegments.isNotEmpty() && wordLikeSegments.all { it.text.all(Char::isDigit) }
+        val isNumeric = isNumericToken(text, wordLikeSegments)
         val isShortWord = wordLength < SHORT_WORD_THRESHOLD
         val isLongWord = wordLength >= LONG_WORD_THRESHOLD
 
@@ -41,5 +41,12 @@ class TokenClassifier {
             ?.takeIf { it.isNotEmpty() }
             ?.let { Locale.forLanguageTag(it) }
             ?: Locale.getDefault()
+    }
+
+    private fun isNumericToken(text: String, wordLikeSegments: List<Segment>): Boolean {
+        if (wordLikeSegments.isEmpty()) return false
+        if (wordLikeSegments.all { it.text.all(Char::isDigit) }) return true
+        val normalized = text.trimEnd('.', '!', '?', '。', '！', '？', '؟')
+        return NUMERIC_TOKEN_REGEX.matches(normalized)
     }
 }

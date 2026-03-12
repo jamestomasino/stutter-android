@@ -14,6 +14,11 @@ fun splitLongTokens(
 
     val result = mutableListOf<Token>()
     for (token in tokens) {
+        if (token.text.hasProtectedNumericSeparator()) {
+            result.add(token)
+            continue
+        }
+
         val hyphenSplit = splitAtHyphenBoundaries(
             text = token.text,
         )
@@ -117,6 +122,8 @@ private fun applyParagraphBoundary(tokens: List<Token>, isParagraphEnd: Boolean)
         else token.copy(isParagraphEnd = false)
     }
 }
+
+private fun String.hasProtectedNumericSeparator(): Boolean = NUMERIC_GROUP_SEPARATOR_REGEX.matches(this)
 
 private val HYPHEN_CHARS = setOf(
     '-',

@@ -39,6 +39,10 @@ internal fun segmentsFor(text: String, locale: Locale): List<Segment> {
 internal val SENTENCE_END_REGEX = Regex("[.!?]|[。！？؟]")
 internal val TRIVIAL_PUNCTUATION_REGEX =
     Regex("^[\\p{P}\\p{S}。、・：；？！「」（）【】『』［］〔〕〈〉《》]+$")
+internal val NUMERIC_GROUP_SEPARATOR_REGEX = Regex(".*\\p{Nd}\\.(?=[\\p{Nd}\\p{Ll}]).*")
+internal val NUMERIC_TOKEN_REGEX = Regex(
+    pattern = "^[+-]?(?:\\p{Nd}+(?:[.,]\\p{Nd}+)*|\\p{Nd}{1,3}(?:[ '\\u00A0\\u202F\\u2019]\\p{Nd}{3})+)$",
+)
 
 internal const val SHORT_WORD_THRESHOLD = 5
 internal const val LONG_WORD_THRESHOLD = 9

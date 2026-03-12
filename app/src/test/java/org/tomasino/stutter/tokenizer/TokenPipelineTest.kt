@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.tomasino.stutter.hyphenation.PatternHyphenator
 import org.tomasino.stutter.scheduler.MonotonicClock
@@ -62,6 +63,20 @@ class TokenPipelineTest {
             listOf(false, true, false, true),
             tokens.map { it.isParagraphEnd },
         )
+    }
+
+    @Test
+    fun preservesNumericGroupSeparatorsDuringLongWordSplitting() {
+        val tokens = buildTokensForText(
+            text = "Upphaed 1.000isk 1.000.000",
+            languageTag = "is",
+            maxWordLength = 4,
+            tokenizer = IcuTokenizer(),
+            hyphenator = PatternHyphenator(),
+        )
+
+        assertTrue(tokens.any { it.text == "1.000isk" })
+        assertTrue(tokens.any { it.text == "1.000.000" })
     }
 
     private fun baseOptions(): PlaybackOptions {

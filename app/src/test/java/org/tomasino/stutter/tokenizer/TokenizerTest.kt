@@ -63,4 +63,21 @@ class TokenizerTest {
         assertNotNull(okToken)
         assertTrue(okToken!!.isShortWord)
     }
+
+    @Test
+    fun groupedNumbersAreClassifiedAsNumeric() {
+        val tokens = tokenizer.tokenize("Talan er 1.000.000.", "is")
+        val numericToken = tokens.firstOrNull { it.text == "1.000.000." }
+
+        assertNotNull(numericToken)
+        assertTrue(numericToken!!.isNumeric)
+        assertTrue(numericToken.isSentenceEnd)
+    }
+
+    @Test
+    fun periodBetweenNumberAndLowercaseStaysInSingleToken() {
+        val tokens = tokenizer.tokenize("Þetta kostar 1.000isk í dag.", "is")
+
+        assertTrue(tokens.any { it.text == "1.000isk" })
+    }
 }
