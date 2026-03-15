@@ -30,8 +30,8 @@ android {
         applicationId = "org.tomasino.stutter"
         minSdk = 24
         targetSdk = 35
-        versionCode = 27
-        versionName = "1.4.1"
+        versionCode = 28
+        versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val screenshotUiMode = providers.gradleProperty("screenshotUiMode").orNull

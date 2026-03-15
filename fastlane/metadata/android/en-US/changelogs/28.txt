@@ -1,0 +1,2 @@
+- Fix adaptive launcher icon support with a dedicated themed icon layer.
+- Restore the richer full-color launcher icon appearance for non-themed mode.
