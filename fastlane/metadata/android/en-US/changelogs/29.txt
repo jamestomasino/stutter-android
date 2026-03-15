@@ -1,0 +1,2 @@
+- Add an option to dim the surrounding UI during active playback without changing the RSVP text.
+- Make automated light/dark screenshots use a deterministic theme to avoid mixed-mode captures.

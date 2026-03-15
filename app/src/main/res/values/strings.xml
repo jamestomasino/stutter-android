@@ -27,6 +27,7 @@
     <string name="label_skip_count">Skip count</string>
     <string name="label_max_word_length">Max word length</string>
     <string name="label_show_flankers">Show flankers</string>
+    <string name="label_dim_ui_during_playback">Dim UI during playback</string>
     <string name="label_auto_detect_html">Auto-detect from HTML</string>
     <string name="button_reset_timing_features">Reset Timing &amp; Features</string>
     <string name="button_reset_all">Reset All</string>

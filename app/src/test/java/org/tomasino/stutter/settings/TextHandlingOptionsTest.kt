@@ -10,6 +10,7 @@ class TextHandlingOptionsTest {
 
         assertEquals(13, defaults.maxWordLength)
         assertEquals(false, defaults.showFlankers)
+        assertEquals(false, defaults.dimUiDuringPlayback)
         assertEquals(false, defaults.inputShelfCollapsed)
     }
 
@@ -18,11 +19,13 @@ class TextHandlingOptionsTest {
         val below = TextHandlingOptions(
             maxWordLength = 1,
             showFlankers = false,
+            dimUiDuringPlayback = false,
             inputShelfCollapsed = false,
         ).clamped()
         val above = TextHandlingOptions(
             maxWordLength = 200,
             showFlankers = true,
+            dimUiDuringPlayback = true,
             inputShelfCollapsed = true,
         ).clamped()
 

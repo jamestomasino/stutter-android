@@ -45,6 +45,7 @@ class SettingsRepository(
         dataStore.edit { prefs ->
             prefs[Keys.MAX_WORD_LENGTH] = clamped.maxWordLength
             prefs[Keys.SHOW_FLANKERS] = clamped.showFlankers
+            prefs[Keys.DIM_UI_DURING_PLAYBACK] = clamped.dimUiDuringPlayback
             prefs[Keys.INPUT_SHELF_COLLAPSED] = clamped.inputShelfCollapsed
         }
     }
@@ -141,6 +142,8 @@ class SettingsRepository(
         val textHandling = TextHandlingOptions(
             maxWordLength = this[Keys.MAX_WORD_LENGTH] ?: TextHandlingOptions.DEFAULT.maxWordLength,
             showFlankers = this[Keys.SHOW_FLANKERS] ?: TextHandlingOptions.DEFAULT.showFlankers,
+            dimUiDuringPlayback = this[Keys.DIM_UI_DURING_PLAYBACK]
+                ?: TextHandlingOptions.DEFAULT.dimUiDuringPlayback,
             inputShelfCollapsed = this[Keys.INPUT_SHELF_COLLAPSED]
                 ?: TextHandlingOptions.DEFAULT.inputShelfCollapsed,
         ).clamped()
@@ -188,6 +191,7 @@ class SettingsRepository(
         val SKIP_COUNT = intPreferencesKey("skip_count")
         val MAX_WORD_LENGTH = intPreferencesKey("max_word_length")
         val SHOW_FLANKERS = booleanPreferencesKey("show_flankers")
+        val DIM_UI_DURING_PLAYBACK = booleanPreferencesKey("dim_ui_during_playback")
         val INPUT_SHELF_COLLAPSED = booleanPreferencesKey("input_shelf_collapsed")
         val AUTO_DETECT_HTML = booleanPreferencesKey("auto_detect_html")
         val DEFAULT_LANGUAGE_TAG = stringPreferencesKey("default_language_tag")

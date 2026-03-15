@@ -1,6 +1,7 @@
 package org.tomasino.stutter
 
 import android.content.Context
+import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -52,7 +53,11 @@ class ScreenshotCaptureTest {
         setNightMode(device, isDark)
         resetSettings(context, isDark)
 
-        ActivityScenario.launch(ReaderActivity::class.java).use {
+        val intent = Intent(context, ReaderActivity::class.java).apply {
+            putExtra(ReaderActivity.EXTRA_SCREENSHOT_DARK_THEME, isDark)
+        }
+
+        ActivityScenario.launch<ReaderActivity>(intent).use {
             device.wait(Until.hasObject(By.desc(context.getString(R.string.action_play))), timeoutMs)
 
             ensureInputShelfExpanded(device, context)

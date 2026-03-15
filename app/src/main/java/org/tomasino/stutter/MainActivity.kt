@@ -369,6 +369,14 @@ fun SettingsScreen(repository: SettingsRepository, modifier: Modifier = Modifier
                     repository.setTextHandlingOptions(options.textHandling.copy(showFlankers = checked))
                 }
             }
+            SwitchRow(
+                label = stringResource(R.string.label_dim_ui_during_playback),
+                checked = options.textHandling.dimUiDuringPlayback,
+            ) { checked ->
+                scope.launch {
+                    repository.setTextHandlingOptions(options.textHandling.copy(dimUiDuringPlayback = checked))
+                }
+            }
 
             LanguageDropdown(
                 selected = options.language.defaultLanguageTag,

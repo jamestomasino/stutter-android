@@ -63,6 +63,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -101,13 +102,19 @@ class ReaderActivity : ComponentActivity() {
         SettingsRepository(applicationContext.settingsDataStore, lifecycleScope)
     }
     private val sharedTextState = mutableStateOf<String?>(null)
+    private val screenshotThemeOverrideState = mutableStateOf<Boolean?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         sharedTextState.value = extractText(intent)
+        screenshotThemeOverrideState.value = extractScreenshotThemeOverride(intent)
         setContent {
-            StutterAndroidTheme {
+            val screenshotThemeOverride = screenshotThemeOverrideState.value
+            StutterAndroidTheme(
+                darkTheme = screenshotThemeOverride ?: isSystemInDarkTheme(),
+                dynamicColor = screenshotThemeOverride == null,
+            ) {
                 ReaderScreen(settingsRepository, sharedTextState.value)
             }
         }
@@ -116,10 +123,12 @@ class ReaderActivity : ComponentActivity() {
     override fun onNewIntent(intent: android.content.Intent?) {
         super.onNewIntent(intent)
         sharedTextState.value = extractText(intent)
+        screenshotThemeOverrideState.value = extractScreenshotThemeOverride(intent)
     }
 
     companion object {
         const val EXTRA_TEXT = "extra_text"
+        const val EXTRA_SCREENSHOT_DARK_THEME = "extra_screenshot_dark_theme"
     }
 
     private fun extractText(intent: android.content.Intent?): String? {
@@ -132,6 +141,12 @@ class ReaderActivity : ComponentActivity() {
             }
         }
         return null
+    }
+
+    private fun extractScreenshotThemeOverride(intent: android.content.Intent?): Boolean? {
+        if (intent == null) return null
+        if (!intent.hasExtra(EXTRA_SCREENSHOT_DARK_THEME)) return null
+        return intent.getBooleanExtra(EXTRA_SCREENSHOT_DARK_THEME, false)
     }
 }
 
@@ -285,6 +300,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
 
     val schedulerState by scheduler.state.collectAsState()
     val isPlaybackActive = schedulerState == org.tomasino.stutter.scheduler.SchedulerState.Playing
+    val chromeAlpha = if (isPlaybackActive && options.textHandling.dimUiDuringPlayback) 0.35f else 1f
     val shelfCollapsed = if (isPlaybackActive) true else options.textHandling.inputShelfCollapsed
     val view = LocalView.current
 
@@ -311,6 +327,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .alpha(chromeAlpha)
                     .animateContentSize(),
                 shape = RoundedCornerShape(16.dp),
                 color = MaterialTheme.colorScheme.surface,
@@ -437,6 +454,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .alpha(chromeAlpha)
                     .height(20.dp),
             ) {
                 Slider(
@@ -478,7 +496,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth().height(96.dp),
+                modifier = Modifier.fillMaxWidth().height(96.dp).alpha(chromeAlpha),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -544,7 +562,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
                 }
             }
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().alpha(chromeAlpha),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {

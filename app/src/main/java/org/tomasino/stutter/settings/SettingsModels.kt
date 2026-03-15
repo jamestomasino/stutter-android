@@ -62,6 +62,7 @@ data class PlaybackOptions(
 data class TextHandlingOptions(
     val maxWordLength: Int,
     val showFlankers: Boolean,
+    val dimUiDuringPlayback: Boolean,
     val inputShelfCollapsed: Boolean,
 ) {
     fun clamped(): TextHandlingOptions {
@@ -75,6 +76,7 @@ data class TextHandlingOptions(
         val DEFAULT = TextHandlingOptions(
             maxWordLength = 13,
             showFlankers = false,
+            dimUiDuringPlayback = false,
             inputShelfCollapsed = false,
         )
     }
