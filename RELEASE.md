@@ -6,6 +6,7 @@ This doc describes the single release path used for GitHub, F-Droid, Obtanium, a
 - Timing regressions are release-blocking (see `TESTPLAN.md`).
 - Update `versionCode` / `versionName` in `app/build.gradle.kts`
   (`versionCode` +1, `versionName` semver).
+- Refresh screenshots with `make screenshots` so store metadata always uses the current UI.
 - Ensure metadata is up to date (title/short/full description, screenshots, feature graphic).
 - Prepare release notes (GitHub Release notes and Play Store text if applicable).
 
@@ -13,6 +14,7 @@ This doc describes the single release path used for GitHub, F-Droid, Obtanium, a
 - [ ] `versionCode` / `versionName` updated
 - [ ] Tests pass (`make test`)
 - [ ] Lint passes (`make lint`)
+- [ ] Screenshots refreshed (`make screenshots`)
 - [ ] Tag created and pushed (`vX.Y.Z`)
 - [ ] GitHub Release includes `app-release-signed.apk` and `app-release.aab`
 - [ ] Optional: verify signing cert (`apksigner verify --print-certs app-release-signed.apk`)
@@ -23,10 +25,12 @@ This doc describes the single release path used for GitHub, F-Droid, Obtanium, a
 ## 1) Local checks (recommended)
 - `make test`
 - `make lint`
+- `make screenshots`
 - Optional: `make bundle` to verify `app-release.aab` locally.
 
 ## 2) Tag a release
 - Commit your changes.
+- Confirm the freshly captured screenshots are committed before tagging.
 - Create an annotated tag `vX.Y.Z` and push it.
   Example:
   `git tag -a v1.2.3 -m "v1.2.3"`

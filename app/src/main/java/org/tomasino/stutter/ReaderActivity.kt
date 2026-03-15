@@ -88,6 +88,7 @@ import org.tomasino.stutter.extractor.ExtractResult
 import org.tomasino.stutter.settings.PlaybackOptions
 import org.tomasino.stutter.settings.SettingsRepository
 import org.tomasino.stutter.settings.settingsDataStore
+import org.tomasino.stutter.scheduler.Scheduler
 import org.tomasino.stutter.tokenizer.IcuTokenizer
 import org.tomasino.stutter.tokenizer.Token
 import org.tomasino.stutter.tokenizer.buildTokensForText
@@ -170,15 +171,19 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     }
 
     fun updateTokensForText(text: String) {
-        tokens = buildTokensForText(
+        val nextTokens = buildTokensForText(
             text = text,
             languageTag = languageTag,
             maxWordLength = options.textHandling.maxWordLength,
             tokenizer = tokenizer,
             hyphenator = hyphenator,
         )
-        scheduler.load(tokens, options.playback)
-        scheduler.restart()
+        tokens = nextTokens
+        loadTokensIntoScheduler(
+            scheduler = scheduler,
+            tokens = nextTokens,
+            options = options.playback,
+        )
     }
 
     LaunchedEffect(
@@ -242,7 +247,7 @@ private fun ReaderScreen(repository: SettingsRepository, initialText: String?) {
     }
 
     var currentIndex by remember { mutableStateOf(0) }
-    LaunchedEffect(tokens) {
+    LaunchedEffect(scheduler) {
         scheduler.events.collect { event ->
             currentIndex = event.index
         }
@@ -672,3 +677,12 @@ private fun fractionToTokenIndex(fraction: Float, totalTokens: Int): Int {
 }
 
 private const val WPM_STEP = 25
+
+internal fun loadTokensIntoScheduler(
+    scheduler: Scheduler,
+    tokens: List<Token>,
+    options: PlaybackOptions,
+) {
+    scheduler.load(tokens, options)
+    scheduler.restart()
+}

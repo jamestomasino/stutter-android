@@ -1,0 +1,2 @@
+- Fix manual input reload so new text always resets playback to the first token.
+- Refresh Play Store screenshots as part of every release prep before tagging.

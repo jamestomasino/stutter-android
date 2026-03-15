@@ -2,6 +2,8 @@
 
 This project uses a consistent, repeatable screenshot process. Capture four phone screenshots:
 
+Release policy: run `make screenshots` as part of every release prep before creating the release tag. Store listings should always use the latest captured screens.
+
 1) Light theme, homepage loaded (input shelf visible)
 2) Light theme, during playback
 3) Dark theme, homepage loaded (input shelf visible)
