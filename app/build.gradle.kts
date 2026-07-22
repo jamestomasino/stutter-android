@@ -9,7 +9,7 @@ import java.util.Properties
 
 android {
     namespace = "org.tomasino.stutter"
-    compileSdk = 35
+    compileSdk = 36
 
     val keystorePropsFile = rootProject.file("keystore.properties")
     val releaseSigningConfig = if (keystorePropsFile.exists()) {
@@ -29,9 +29,9 @@ android {
     defaultConfig {
         applicationId = "org.tomasino.stutter"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 29
-        versionName = "1.4.3"
+        targetSdk = 36
+        versionCode = 30
+        versionName = "1.4.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         val screenshotUiMode = providers.gradleProperty("screenshotUiMode").orNull
