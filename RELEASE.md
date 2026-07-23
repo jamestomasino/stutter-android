@@ -6,9 +6,14 @@ This doc describes the single release path used for GitHub, F-Droid, Obtanium, a
 - Timing regressions are release-blocking (see `TESTPLAN.md`).
 - Update `versionCode` / `versionName` in `app/build.gradle.kts`
   (`versionCode` +1, `versionName` semver).
+- **If you changed `compileSdk` or `targetSdk`:** also update
+  `.github/workflows/android-release.yml` — the `sdkmanager` and
+  `apksigner` paths must match the new API level, otherwise CI will fail.
 - Refresh screenshots with `make screenshots` so store metadata always uses the current UI.
 - Ensure metadata is up to date (title/short/full description, screenshots, feature graphic).
 - Prepare release notes (GitHub Release notes and Play Store text if applicable).
+- Add the Play/F-Droid changelog entry under
+  `fastlane/metadata/android/en-US/changelogs/<versionCode>.txt`.
 
 ## Release checklist (quick pass)
 - [ ] `versionCode` / `versionName` updated
@@ -48,6 +53,9 @@ launcher resources, do a clean uninstall/reinstall to verify the update.
 
 ## 4) F-Droid
 - Run `scripts/fdroid-sync.sh` to sync `fdroiddata` metadata/signatures from the tag.
+  Requires the `fdroiddata` repo cloned at `../fdroiddata` (or set `FDROID_REPO`).
+- The script pushes a branch to the fdroiddata remote. You must then create
+  a merge request on GitLab to merge it into `master`.
 - Ensure the signatures artifact is uploaded and `metadata/org.tomasino.stutter.yml` is updated.
 
 ## 5) Obtanium
@@ -64,4 +72,3 @@ launcher resources, do a clean uninstall/reinstall to verify the update.
 
 ## 7) Post-release
 - Monitor issues/reviews and plan the next update.
-- Add/update the Play/F-Droid changelog entry under `fastlane/metadata/android/en-US/changelogs/`.

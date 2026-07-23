@@ -20,8 +20,8 @@ This checklist tracks what is required to publish the app to Google Play. Mark i
       (CI: tag push runs Android Release workflow and uploads `app-release.aab`)
 - [ ] Signing config wired for Play upload key (local or CI)
 - [ ] Upload key / keystore storage documented (location, access, rotation plan)
-- [x] versionCode and versionName updated for release (15 / 1.1.3)
-- [x] Target SDK meets current Play requirements (targetSdk 34)
+- [x] versionCode and versionName updated for release (30 / 1.4.4)
+- [x] Target SDK meets current Play requirements (targetSdk 36)
 - [x] Min SDK and device support confirmed (minSdk 24)
 
 ### Play App Signing (use existing key)
