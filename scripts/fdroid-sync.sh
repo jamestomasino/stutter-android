@@ -51,22 +51,25 @@ from pathlib import Path
 path = Path("$FDROID_REPO/metadata/${APP_ID}.yml")
 text = path.read_text(encoding="utf-8")
 
-def replace_once(pattern, replacement):
-    new_text, count = re.subn(pattern, replacement, text, count=1, flags=re.M)
+def replace_once(pattern, value):
+    def repl(m):
+        prefix = m.group(1)
+        return prefix + value
+    new_text, count = re.subn(pattern, repl, text, count=1, flags=re.M)
     if count != 1:
         raise SystemExit(f"Failed to update pattern: {pattern}")
     return new_text
 
-text = replace_once(r'^(\\s*-\\s*versionName:\\s*).*$',
-                    r'\\1${VERSION_NAME}')
-text = replace_once(r'^(\\s*versionCode:\\s*).*$',
-                    r'\\1${VERSION_CODE}')
-text = replace_once(r'^(\\s*commit:\\s*).*$',
-                    r'\\1${TAG}')
-text = replace_once(r'^(CurrentVersion:\\s*).*$',
-                    r'\\1${VERSION_NAME}')
-text = replace_once(r'^(CurrentVersionCode:\\s*).*$',
-                    r'\\1${VERSION_CODE}')
+text = replace_once(r'^(\s*-\s*versionName:\s*).*$',
+                    '${VERSION_NAME}')
+text = replace_once(r'^(\s*versionCode:\s*).*$',
+                    '${VERSION_CODE}')
+text = replace_once(r'^(\s*commit:\s*).*$',
+                    '${TAG}')
+text = replace_once(r'^(CurrentVersion:\s*).*$',
+                    '${VERSION_NAME}')
+text = replace_once(r'^(CurrentVersionCode:\s*).*$',
+                    '${VERSION_CODE}')
 
 path.write_text(text, encoding="utf-8")
 PY
