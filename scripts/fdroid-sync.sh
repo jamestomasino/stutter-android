@@ -28,6 +28,9 @@ PY
 
 TAG="v${VERSION_NAME}"
 
+# Resolve tag to full commit hash (fdroiddata requires hashes, not tag refs)
+COMMIT_HASH=$(git rev-parse "$TAG")
+
 if [ -n "$(git -C "$FDROID_REPO" status --porcelain)" ]; then
   echo "ERROR: fdroiddata repo has uncommitted changes." >&2
   exit 1
@@ -65,7 +68,7 @@ text = replace_once(r'^(\s*-\s*versionName:\s*).*$',
 text = replace_once(r'^(\s*versionCode:\s*).*$',
                     '${VERSION_CODE}')
 text = replace_once(r'^(\s*commit:\s*).*$',
-                    '${TAG}')
+                    '${COMMIT_HASH}')
 text = replace_once(r'^(CurrentVersion:\s*).*$',
                     '${VERSION_NAME}')
 text = replace_once(r'^(CurrentVersionCode:\s*).*$',
