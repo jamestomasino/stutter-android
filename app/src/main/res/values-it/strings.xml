@@ -87,4 +87,5 @@
     <string name="label_paragraph_delay">Paragraph delay</string>
     <string name="action_decrease_wpm">Decrease WPM</string>
     <string name="action_increase_wpm">Increase WPM</string>
+    <string name="label_dim_ui_during_playback">Dim UI during playback</string>
 </resources>
